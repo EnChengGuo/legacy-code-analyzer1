@@ -22,7 +22,7 @@
         return;
       }
       $('path').value = d.path; startPolling();
-    }).catch(function (e) { $('go').disabled = false; msg('err', '連不上本機程式:' + esc(e.message)); });
+    }).catch(function (e) { $('go').disabled = false; msg('err', '連不上 CodeAtlas 本機程式(' + esc(e.message) + ')。請確認黑色視窗還開著;如果已經關掉,重新執行 CodeAtlas.exe,再按 F5 重新整理這一頁。'); });
   }
 
   function startPolling() {
