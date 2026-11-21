@@ -1,10 +1,10 @@
 專案 TestShop(5 個原始檔)
-  介面 TestShop.Domain.IWaferSource  成員 1
+  介面 TestShop.Domain.IItemSource  成員 1
   類別 TestShop.Domain.BaseForm  成員 1
-  類別 TestShop.Domain.AOI_Form  成員 7
-  類別 TestShop.Domain.AOI_Form.AOI_CountWafer_Parameters  成員 3
-  類別 TestShop.Domain.AOI_Form_Special  成員 1
-  類別 TestShop.Domain.AOI_Form_Special2  成員 0
+  類別 TestShop.Domain.Machine_Form  成員 7
+  類別 TestShop.Domain.Machine_Form.Machine_CountItem_Parameters  成員 3
+  類別 TestShop.Domain.Machine_Form_Special  成員 1
+  類別 TestShop.Domain.Machine_Form_Special2  成員 0
   類別 TestShop.Domain.Order  成員 9
   類別 TestShop.Domain.OrderLine  成員 9
   類別 TestShop.Domain.Customer  成員 4

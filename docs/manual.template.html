@@ -302,7 +302,7 @@ David Thomas、Andrew Hunt《The Pragmatic Programmer》20 週年紀念版(Addis
 
 <h3>(2)職責分群</h3>
 <p>把方法依「共用的欄位」與「互相呼叫」綁成群;每一群是一個可能獨立出去的職責。被太多成員共用的欄位或方法(例如寫記錄的 <code>Log</code>)視為「樞紐」,不拿來綁群,否則所有方法會被它綁成一大團。頁面上方的「樞紐門檻」滑桿可以調整。另外算出 <b>LCOM4</b>(分成幾個互不相連的群),越大表示這個類別做了越多件不相干的事。</p>
-<figure><img src="{{img:10-god-cl}}"><figcaption>圖 6-3　職責分群。測試專案被分成「晶圓與批號」「儲存設定」「Mark」,以及互不相干的 Dup1、Dup2。</figcaption></figure>
+<figure><img src="{{img:10-god-cl}}"><figcaption>圖 6-3　職責分群。測試專案被分成「項目與批號」「儲存設定」「Mark」,以及互不相干的 Dup1、Dup2。</figcaption></figure>
 
 <h3>(3)儲存對照</h3>
 <p>推測哪些欄位對應到「儲存」(設定檔、資料庫、序列化),依三種線索:<b>屬性標註</b>(如 <code>[XmlElement]</code>、<code>[DataMember]</code>)、<b>字串鍵</b>(<code>ini.Write("Exposure", _exposure…)</code>、<code>_gain = … ini.Read("Gain")</code>、<code>row["欄位名"]</code>)、<b>同名字串</b>。</p>
@@ -324,7 +324,7 @@ David Thomas、Andrew Hunt《The Pragmatic Programmer》20 週年紀念版(Addis
 <pre class="cmd">powershell -ExecutionPolicy Bypass -File samples\GodDemo\建立git歷史.ps1
 CodeAtlas.exe debtors "%TEMP%\GodDemo-git\GodDemo.sln" GodDemo.GodForm</pre>
 <pre>{{snip:debtors}}</pre>
-<p>看 <code>SaveSettings()</code>:最後是 Alice 改的,再前一代是 Carol,最早是 Bob。<code>AddWafer()</code>:最後 Carol,前一代 Alice。有註解的成員(如 <code>_waferCount</code>、<code>Log</code>)已被排除。</p>
+<p>看 <code>SaveSettings()</code>:最後是 Alice 改的,再前一代是 Carol,最早是 Bob。<code>AddItem()</code>:最後 Carol,前一代 Alice。有註解的成員(如 <code>_itemCount</code>、<code>Log</code>)已被排除。</p>
 <figure><img src="{{img:13-god-debt}}"><figcaption>圖 6-6　冤親債主分頁:成員、最後編輯者(含日期與提交說明)、上幾代。</figcaption></figure>
 <div class="box warn"><b class="t">限制</b>
 ・找不到 git 時會明講,不會亂猜。<br>
@@ -338,7 +338,7 @@ Adam Tornhill《Your Code as a Crime Scene》第 2 版(Pragmatic Bookshelf,2024)
 <!-- ======================= 7 ======================= -->
 <h1 id="c7">7　類別圖與關係圖</h1>
 <p>網頁:<code>/classes</code>。左側是<b>檔案大綱</b>(可搜尋檔名、類別名或成員名),中間是圖,右側是<b>符號資訊欄</b>(點選類別後出現)。</p>
-<figure><img src="{{img:02-classes}}"><figcaption>圖 7-1　類別圖:焦點類別 <code>AOI_Form</code>。往上有 <code>BaseForm</code> 與 <code>IWaferSource</code>,往下有兩層子類別,內層類別 <code>AOI_CountWafer_Parameters</code> 與它的成員 <code>CalculateWaferParam</code> 也畫出來了。</figcaption></figure>
+<figure><img src="{{img:02-classes}}"><figcaption>圖 7-1　類別圖:焦點類別 <code>Machine_Form</code>。往上有 <code>BaseForm</code> 與 <code>IItemSource</code>,往下有兩層子類別,內層類別 <code>Machine_CountItem_Parameters</code> 與它的成員 <code>CalculateItemParam</code> 也畫出來了。</figcaption></figure>
 
 <h2>7.1　三種檢視</h2>
 <ul>
@@ -387,7 +387,7 @@ Adam Tornhill《Your Code as a Crime Scene》第 2 版(Pragmatic Bookshelf,2024)
 <figure><img src="{{img:03-classes-info}}"><figcaption>圖 7-3　點選 <code>GodForm</code> 後,右側的符號資訊欄(使用有 git 歷史的 GodDemo)。</figcaption></figure>
 
 <h2>7.6　檔案大綱搜尋</h2>
-<p>左側大綱把類別依「所在檔案」分組。搜尋框同時比對<b>檔名、類別名、成員名</b>:搜 <code>CalculateWafer</code> 會找到包含該方法的 <code>AOI_CountWafer_Parameters</code>,並註明「含 CalculateWaferParam」。點一個項目就把它設成焦點。</p>
+<p>左側大綱把類別依「所在檔案」分組。搜尋框同時比對<b>檔名、類別名、成員名</b>:搜 <code>CalculateItem</code> 會找到包含該方法的 <code>Machine_CountItem_Parameters</code>,並註明「含 CalculateItemParam」。點一個項目就把它設成焦點。</p>
 
 <h2>7.7　便利貼、存版面、下載 SVG</h2>
 <ul>

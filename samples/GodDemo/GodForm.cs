@@ -19,7 +19,7 @@ namespace GodDemo
         private IniFile _ini = new IniFile();
         private double _exposure;
         private double _gain;
-        private int _waferCount;   // 晶圓數
+        private int _itemCount;   // 項目數
         private string _lotId;
         private int _unusedCounter;
         private string _log;
@@ -49,9 +49,9 @@ namespace GodDemo
 
         private void UpdateUi() { txtExposure.Text = _exposure.ToString(); }
 
-        public void AddWafer() { _waferCount++; Log("add"); }
-        public int GetWaferCount() { return _waferCount; }
-        public void ResetWafer() { _waferCount = 0; Log("reset"); }
+        public void AddItem() { _itemCount++; Log("add"); }
+        public int GetItemCount() { return _itemCount; }
+        public void ResetItem() { _itemCount = 0; Log("reset"); }
 
         public void SetLot(string id) { _lotId = id; Log("lot"); }
         public string GetLot() { return _lotId; }
