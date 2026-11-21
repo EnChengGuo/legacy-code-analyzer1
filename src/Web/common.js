@@ -65,11 +65,11 @@
       });
     },
     save: function (page, name, obj) {
-      return fetch('/api/layout?page=' + encodeURIComponent(page) + '&name=' + encodeURIComponent(name), { method: 'POST', body: JSON.stringify(obj) })
+      return fetch('/api/layout?page=' + encodeURIComponent(page) + '&name=' + encodeURIComponent(name), { method: 'POST', headers: { 'X-CodeAtlas': '1' }, body: JSON.stringify(obj) })
         .then(function (r) { if (!r.ok) throw new Error('儲存失敗'); return r.json(); });
     },
     del: function (page, name) {
-      return fetch('/api/layout?page=' + encodeURIComponent(page) + '&name=' + encodeURIComponent(name), { method: 'DELETE' });
+      return fetch('/api/layout?page=' + encodeURIComponent(page) + '&name=' + encodeURIComponent(name), { method: 'DELETE', headers: { 'X-CodeAtlas': '1' } });
     }
   };
 

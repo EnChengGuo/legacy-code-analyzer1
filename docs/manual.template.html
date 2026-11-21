@@ -129,18 +129,38 @@ svg text { font-family: "Microsoft JhengHei", sans-serif; }
 <tr><th>內容</th><th>說明</th></tr>
 <tr><td><code>CodeAtlas.exe</code> 與 <code>*.dll</code></td><td>程式本體與 Roslyn 等相依元件。<b>請整個資料夾一起複製</b>,只複製 exe 會缺 DLL。</td></tr>
 <tr><td><code>Web\</code>、<code>Assets\</code></td><td>網頁介面與離線的圖形函式庫(Cytoscape、dagre、Mermaid)。缺了它們網頁會是空白。</td></tr>
-<tr><td><code>啟動 CodeAtlas.bat</code></td><td>把 .sln 或 .csproj 拖到它上面,就會啟動並開啟瀏覽器。</td></tr>
+<tr><td><code>啟動 CodeAtlas.bat</code></td><td>雙擊會開啟「開啟專案」頁;把 .sln 或 .csproj 拖到它上面,則直接載入該專案。</td></tr>
 <tr><td><code>samples\</code></td><td>本文所有範例用的自建測試專案。</td></tr>
 <tr><td>本說明 PDF</td><td></td></tr>
 </table>
 <p>這個免安裝版已實際用「解壓縮到另一個資料夾再執行」的方式測試過(見附錄 D)。</p>
 
-<h2>2.3　啟動</h2>
-<p>最簡單:把你的 <code>.sln</code> 檔拖到 <code>啟動 CodeAtlas.bat</code> 上。或在命令列:</p>
-<pre class="cmd">CodeAtlas.exe serve 你的方案.sln 5173 --open</pre>
-<p><code>serve</code> 會在本機(<code>localhost</code>)啟動網頁,預設埠號 5173;加上 <code>--open</code> 會自動開瀏覽器。它只聽本機,不對外開放,也不需要系統管理員權限。結束時在視窗按 <kbd>Ctrl</kbd>+<kbd>C</kbd>。</p>
-<p>網頁的頂端有固定的導覽列,每一頁的最左邊都是 <b>🏠 總覽</b>,按了就回到首頁。</p>
-<figure><img src="{{img:01-dashboard}}"><figcaption>圖 2-1　首頁:總覽儀表板(用測試專案 TestShop 產生)。頂端導覽列的「🏠 總覽」在每一頁都在。</figcaption></figure>
+<h2>2.3　啟動,以及從網頁開啟專案</h2>
+<p><b>最簡單:直接雙擊 <code>CodeAtlas.exe</code>。</b>會出現一個黑色視窗(請保持開著),並自動開啟瀏覽器的「<b>開啟專案</b>」頁,你在那裡輸入或挑選專案路徑即可,不必用命令列。要結束時關掉黑色視窗(或在視窗按 <kbd>Ctrl</kbd>+<kbd>C</kbd>)。</p>
+<p>其他啟動方式(結果相同):</p>
+<ul>
+<li>把 <code>.sln</code> 或 <code>.csproj</code> <b>拖到 <code>CodeAtlas.exe</code> 或 <code>啟動 CodeAtlas.bat</code> 上</b>:直接載入該專案並開啟總覽;</li>
+<li>命令列 <code>CodeAtlas.exe serve</code>:和雙擊一樣,先開「開啟專案」頁;</li>
+<li>命令列 <code>CodeAtlas.exe serve 你的方案.sln 5173 --open</code>:直接載入指定專案(埠號預設 5173,被占用時會自動往後找一個)。</li>
+</ul>
+<p>伺服器只聽本機(<code>localhost</code>),不對外開放,也不需要系統管理員權限。</p>
+
+<h3>2.3.1　「開啟專案」頁</h3>
+<figure><img src="{{img:15-open-empty}}"><figcaption>圖 2-1　剛啟動、還沒開啟任何專案時的「開啟專案」頁。</figcaption></figure>
+<ul>
+<li><b>輸入路徑</b>:填 <code>.sln</code> 或 <code>.csproj</code> 的完整路徑,按「開啟」或 <kbd>Enter</kbd>。可以直接貼上含引號的路徑(檔案總管「複製為路徑」的結果)。</li>
+<li><b>輸入資料夾</b>也可以:程式會在資料夾裡(含下三層,略過 bin、obj、.git 等)找 <code>.sln</code> 或 <code>.csproj</code>。找到一個就直接開,找到多個會列出來讓你選。</li>
+<li><b>瀏覽資料夾</b>(右下):瀏覽器拿不到檔案的完整路徑,所以由本機程式幫你列出。點資料夾往下進、點「上一層」往上、點上方麵包屑跳回;點一個 <code>.sln</code> 或 <code>.csproj</code> 會填入路徑,<b>點兩下直接開啟</b>。左邊有桌面、文件、使用者資料夾的捷徑。</li>
+<li><b>最近開啟</b>(左下):記住最近 12 個專案(連同「用原始碼取代 DLL」的設定),點一下就重新開啟;✕ 可從清單移除。紀錄存在 <code>%AppData%\CodeAtlas\recent.json</code>。</li>
+<li><b>進階:用原始碼取代 DLL</b>:每行一個「DLL名稱=原始碼位置」,等同第 3.2 節的 <code>--source</code>;方案旁的 <code>codeatlas.sources</code> 也會自動套用。</li>
+</ul>
+<p>按下「開啟」後,頁面會顯示載入進度(讀取、建立語意模型、分析類別關係…),完成後自動前往總覽。大型專案載入需要一點時間,這段時間可以繼續使用瀏覽器,不會卡住。</p>
+<figure><img src="{{img:16-open-loaded}}"><figcaption>圖 2-2　開啟專案後:上方顯示目前專案與統計,下方是最近開啟與資料夾瀏覽。</figcaption></figure>
+<div class="box"><b class="t">切換專案</b>每一頁頂端導覽列都有「📂 專案名稱」,點它就回到這一頁,可以隨時換成別的專案;換專案時舊的分析結果會整組換掉。<b>載入失敗時(例如專案檔壞了),原本開著的專案會保留</b>,頁面會顯示失敗原因。載入進行中不能同時開第二個專案。</div>
+
+<h3>2.3.2　網頁導覽</h3>
+<p>網頁的頂端有固定的導覽列,最左邊是 <b>🏠 總覽</b>,按了就回到首頁。</p>
+<figure><img src="{{img:01-dashboard}}"><figcaption>圖 2-3　首頁:總覽儀表板(用測試專案 TestShop 產生)。頂端導覽列的「🏠 總覽」與「📂 專案名稱」在每一頁都在。</figcaption></figure>
 
 <!-- ======================= 3 ======================= -->
 <h1 id="c3">3　載入專案,以及用原始碼取代 DLL</h1>
@@ -614,12 +634,13 @@ CodeAtlas.exe body    方案.sln 類別名稱.方法名稱 36 44  &lt;- 只讀�
 <tr><td><code>body &lt;名稱&gt; [起行 迄行]</code></td><td>只讀某成員或類別的原始碼,可指定行號範圍</td></tr>
 <tr><td><code>flow &lt;方法&gt; [展開層數]</code></td><td>函式流程(輸出 Mermaid 與 PlantUML 文字)</td></tr>
 <tr><td><code>dashboard [輸出.html]</code></td><td>輸出總覽儀表板</td></tr>
-<tr><td><code>serve [埠號] [--open]</code></td><td>啟動本機網頁(預設 5173)</td></tr>
+<tr><td><code>serve [方案] [埠號] [--open]</code></td><td>啟動本機網頁(預設 5173)。不指定方案時,在網頁的「開啟專案」頁輸入或選擇路徑(直接雙擊 exe 也是這樣)</td></tr>
 <tr><td><code>emit &lt;專案&gt; &lt;輸出.dll&gt;</code></td><td>開發用:把專案編成 DLL(測試 <code>--source</code> 時使用)</td></tr>
 </table>
 <h2>網頁一覽</h2>
 <table>
 <tr><th>網址</th><th>內容</th></tr>
+<tr><td><code>/open</code></td><td>📂 開啟專案(輸入路徑、瀏覽資料夾、最近開啟、切換專案)</td></tr>
 <tr><td><code>/</code></td><td>🏠 總覽儀表板</td></tr>
 <tr><td><code>/classes</code></td><td>類別圖與關係圖(網址參數:<code>focus=類別</code>、<code>select=類別</code>)</td></tr>
 <tr><td><code>/flow</code></td><td>函式流程(<code>name=方法</code>、<code>tab=seq|act|tree|state|data</code>)</td></tr>

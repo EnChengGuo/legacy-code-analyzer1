@@ -5,21 +5,27 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Linq;
+using System.Threading;
 using System.Web.Script.Serialization;
 using Microsoft.CodeAnalysis;
 
 namespace CodeAtlas
 {
     /// <summary>本機網頁伺服器:只聽 localhost,不需要系統管理員權限,不需安裝任何東西。</summary>
-    public class Server
+    public partial class Server
     {
-        readonly Analyzer an; readonly DiagramBuilder diagram;
+        Analyzer an; DiagramBuilder diagram; // 還沒開啟專案時是 null;開啟或換專案時整組替換(替換時持有 gate)
         readonly string baseDir = AppDomain.CurrentDomain.BaseDirectory;
         readonly JavaScriptSerializer json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue, RecursionLimit = 200 };
         readonly object gate = new object();
         string dashboardHtml;
 
-        public Server(Analyzer an) { this.an = an; diagram = new DiagramBuilder(an); }
+        /// <param name="an">已載入的專案;null 表示先啟動、再由網頁選專案。</param>
+        public Server(Analyzer an, string path = null, string sourcesText = null)
+        {
+            this.an = an;
+            if (an != null) { diagram = new DiagramBuilder(an); if (path != null) SetLoaded(path, sourcesText); }
+        }
 
         static readonly Dictionary<string, string> Mime = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -29,17 +35,30 @@ namespace CodeAtlas
 
         public void Run(int port, bool open)
         {
-            var url = "http://localhost:" + port + "/";
-            var l = new HttpListener();
-            l.Prefixes.Add(url);
-            l.Start();
-            Console.WriteLine("CodeAtlas 已啟動:" + url + "  (按 Ctrl+C 結束)");
-            if (open) try { Process.Start(url); } catch { }
+            HttpListener l = null; int p = port;
+            for (int i = 0; i < 10 && l == null; i++, p++) // 預設埠號被占用時,自動往後找一個
+            {
+                try { var t = new HttpListener(); t.Prefixes.Add("http://localhost:" + p + "/"); t.Start(); l = t; }
+                catch (HttpListenerException) { }
+            }
+            if (l == null) throw new Exception("埠號 " + port + " 到 " + (port + 9) + " 都被占用,請關掉其他的 CodeAtlas 或指定別的埠號(serve 埠號)。");
+            var url = "http://localhost:" + (p - 1) + "/";
+            if (p - 1 != port) Console.WriteLine("埠號 " + port + " 被占用,改用 " + (p - 1) + "。");
+            Console.WriteLine("CodeAtlas 已啟動:" + url + "  (按 Ctrl+C 或關閉這個視窗結束)");
+            if (an == null) Console.WriteLine("請在瀏覽器裡選擇要開啟的專案。");
+            var start = an == null ? url + "open" : url;
+            if (open) try { Process.Start(start); } catch { Console.WriteLine("無法自動開啟瀏覽器,請手動開啟:" + start); }
             while (true)
             {
                 var ctx = l.GetContext();
-                try { Handle(ctx); }
-                catch (Exception ex) { Send(ctx, 500, "application/json; charset=utf-8", json.Serialize(new { error = ex.Message })); }
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    try { Handle(ctx); }
+                    catch (Exception ex)
+                    {
+                        try { Send(ctx, 500, "application/json; charset=utf-8", json.Serialize(new { error = ex.Message })); } catch { }
+                    }
+                });
             }
         }
 
@@ -234,10 +253,27 @@ namespace CodeAtlas
         {
             var path = ctx.Request.Url.AbsolutePath;
             var q = Query(ctx);
+            // 防止別的網站偷打本機 API:只接受 localhost 的 Host,而且會改動資料的請求必須帶自訂標頭(瀏覽器跨站送不出來)
+            var host = ctx.Request.UserHostName ?? "";
+            if (!(host.StartsWith("localhost") || host.StartsWith("127.0.0.1"))) { Send(ctx, 403, "text/plain; charset=utf-8", "不允許的來源"); return; }
+            var method = ctx.Request.HttpMethod;
+            if ((method == "POST" || method == "DELETE") && ctx.Request.Headers["X-CodeAtlas"] != "1") { Send(ctx, 403, Mime[".json"], "{\"error\":\"缺少必要標頭\"}"); return; }
+
+            if (path == "/api/status") { Send(ctx, 200, Mime[".json"], json.Serialize(StatusJson())); return; }
+            if (path == "/api/open" && method == "POST") { Send(ctx, 200, Mime[".json"], json.Serialize(OpenApi(ctx))); return; }
+            if (path == "/api/browse") { Send(ctx, 200, Mime[".json"], json.Serialize(BrowseJson(q["path"]))); return; }
+            if (path == "/api/recent") { Send(ctx, 200, Mime[".json"], json.Serialize(RecentApi(ctx, q))); return; }
+            if (an == null)
+            {   // 還沒開啟專案:頁面導向「開啟專案」,分析用的 API 回報需要先開啟
+                if (path == "/" || path == "/classes" || path == "/flow" || path == "/canvas" || path == "/god" || path == "/clones")
+                { ctx.Response.Redirect("/open"); ctx.Response.Close(); return; }
+                if (path.StartsWith("/api/") && path != "/api/layout")
+                { Send(ctx, 200, Mime[".json"], "{\"error\":\"尚未開啟專案,請先到「開啟專案」頁。\",\"needOpen\":true}"); return; }
+            }
             if (path == "/")
             {
-                lock (gate) { if (dashboardHtml == null) dashboardHtml = Report.Dashboard(an, true); }
-                Send(ctx, 200, Mime[".html"], dashboardHtml); return;
+                string html; lock (gate) { if (dashboardHtml == null) dashboardHtml = Report.Dashboard(an, true); html = dashboardHtml; }
+                Send(ctx, 200, Mime[".html"], html); return;
             }
             if (path == "/api/layout") { LayoutApi(ctx); return; }
             if (path.StartsWith("/api/"))
@@ -273,6 +309,7 @@ namespace CodeAtlas
             // 靜態檔案:/assets/* 在 Assets,其餘在 Web
             string rel = path.TrimStart('/'), root = Path.Combine(baseDir, "Web");
             if (rel.StartsWith("assets/")) { rel = rel.Substring(7); root = Path.Combine(baseDir, "Assets"); }
+            if (rel == "open") rel = "open.html";
             if (rel == "classes") rel = "classes.html";
             if (rel == "flow") rel = "flow.html";
             if (rel == "canvas") rel = "canvas.html";

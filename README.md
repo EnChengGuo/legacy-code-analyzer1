@@ -22,10 +22,11 @@ C# 程式碼語意分析工具。以 Roslyn 在 .NET Framework 4.8 上直接執�
 ```powershell
 cd src
 dotnet build -c Release
-.\bin\Release\net48\CodeAtlas.exe serve ..\samples\TestShop.sln --open
+.\bin\Release\net48\CodeAtlas.exe
 ```
 
-不加參數執行 `CodeAtlas.exe` 會列出所有指令。
+不加參數(或直接雙擊 exe)會啟動本機網頁,並開啟「開啟專案」頁,在那裡輸入 `.sln` / `.csproj` 的路徑、瀏覽資料夾或從最近開啟挑選。
+也可以直接指定專案:`CodeAtlas.exe serve ..\samples\TestShop.sln --open`。命令列的所有指令用 `CodeAtlas.exe help` 查看。
 
 ## 目錄
 

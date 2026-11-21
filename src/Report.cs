@@ -187,7 +187,7 @@ th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);verti
             sb.Append("<h2 id='diag'>編譯診斷(" + diags.Count + ")</h2>");
             if (diags.Count == 0) sb.Append("<p class='ok'>沒有警告或錯誤。</p>");
             foreach (var d in diags.Take(100)) sb.Append("<div>" + H(d) + "</div>");
-            sb.Append("</main></body></html>");
+            sb.Append("</main>" + (served ? "<script src='/nav.js'></script>" : "") + "</body></html>");
             return sb.ToString();
         }
     }

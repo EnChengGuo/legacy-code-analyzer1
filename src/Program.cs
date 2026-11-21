@@ -19,7 +19,8 @@ namespace CodeAtlas
   (任何指令都可加)  --source DLL名稱=原始碼位置   用原始碼取代某個 DLL;也可在方案旁放 codeatlas.sources
   clones [標記數] [最少行數]  重複程式碼偵測(預設 40 標記、6 行)
   debtors <類別>         冤親債主:沒寫註解的成員,最後編輯者與歷代編輯者(需要 git)
-  serve [埠號] [--open]  啟動本機網頁(預設 5173),含類別圖、關係圖、Mermaid
+  serve [方案] [埠號] [--open]  啟動本機網頁(預設 5173)。不指定方案時,在網頁的「開啟專案」頁輸入或選擇路徑
+                         (不加任何參數直接執行 CodeAtlas.exe 也是這樣)
   metrics [N]          品質度量:CC、MI、巢狀、WMC、Ca、Ce(各列前 N 名,預設 15)
   dead                   死碼偵測(高/中/低可信度)
   cycles                 循環相依(專案/命名空間/型別)
@@ -47,7 +48,7 @@ namespace CodeAtlas
             {
                 Console.OutputEncoding = Encoding.UTF8;
                 Console.WriteLine("CodeAtlas — C# 程式碼語意分析工具\n");
-                Console.WriteLine("最簡單的用法:把你的 .sln 或 .csproj 檔,拖曳到 CodeAtlas.exe(或「啟動 CodeAtlas.bat」)上。\n");
+                Console.WriteLine("正在啟動,瀏覽器會開啟「開啟專案」頁面,請在那裡輸入或選擇 .sln / .csproj 的路徑。\n");
             }
             int code;
             try { code = Run(args); }
@@ -64,6 +65,15 @@ namespace CodeAtlas
         static int Run(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
+            // 沒有指定專案:直接啟動網頁,讓使用者在「開啟專案」頁輸入或瀏覽路徑(雙擊 exe 就是這種情況)
+            bool noProject = args.Length == 0 || (args[0] == "serve" && (args.Length == 1 || args[1].StartsWith("--") || args[1].All(char.IsDigit)));
+            if (noProject)
+            {
+                Console.OutputEncoding = Encoding.UTF8;
+                int p0 = 5173; foreach (var a in args.Skip(1)) { int v; if (int.TryParse(a, out v)) p0 = v; }
+                new Server(null).Run(p0, !args.Contains("--no-open"));
+                return 0;
+            }
             if (args.Length < 2) { Console.WriteLine(Usage); return 2; }
             try
             {
@@ -135,7 +145,7 @@ namespace CodeAtlas
                         {
                             int port = 5173;
                             if (arg != null && !arg.StartsWith("--")) int.TryParse(arg, out port);
-                            new Server(an).Run(port, args.Contains("--open"));
+                            new Server(an, System.IO.Path.GetFullPath(args[1]), string.Join("\n", sources.Select(kv => kv.Key + "=" + kv.Value))).Run(port, args.Contains("--open"));
                             return 0;
                         }
                     case "metrics":
