@@ -22,7 +22,7 @@ for name in os.listdir(BIN):
     if os.path.isdir(s): shutil.copytree(s, t, ignore=skip)
     else: shutil.copy2(s, t)
 shutil.copytree(os.path.join(ROOT, "samples"), os.path.join(DIST, "samples"), ignore=skip)
-shutil.copy2(os.path.join(ROOT, "docs", "CodeAtlas使用說明_v0.9.pdf"), DIST)
+shutil.copy2(os.path.join(ROOT, "CodeAtlas原版使用說明_v0.9.pdf"), DIST)
 shutil.copy2(os.path.join(ROOT, "使用說明.txt"), DIST)
 
 with zipfile.ZipFile(ZIP, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as z:
