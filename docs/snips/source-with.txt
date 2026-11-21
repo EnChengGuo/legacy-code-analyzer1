@@ -1,0 +1,4 @@
+[警告] 以原始碼取代 DLL:Lib → D:\AIBDD\practise\CodeAtlas\samples\DllDemo\Lib\Lib.csproj
+方法 Lib.Greeter.Hello(string)
+  [呼叫] 1 處
+  呼叫	Program.cs:5	在 App.Program.Main()	static void Main() { System.Console.WriteLine(new Lib.Greeter().Hello("x")); }

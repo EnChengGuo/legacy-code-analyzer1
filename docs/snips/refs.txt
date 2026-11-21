@@ -1,0 +1,12 @@
+屬性 TestShop.Domain.Order.Total
+  [讀] 6 處
+  [讀寫] 1 處
+  [寫] 1 處
+  讀	Program.cs:13	在 TestShop.App.Program.Main()	Console.WriteLine(order.Total);
+  讀寫	Order.cs:15	在 TestShop.Domain.Order.AddLine(TestShop.Domain.OrderLine)	Total += line.Price * line.Quantity;
+  讀	Order.cs:20	在 TestShop.Domain.Order.ApplyDiscount(decimal)	if (rate < 0 || rate > 1) return Total;
+  寫	Order.cs:21	在 TestShop.Domain.Order.ApplyDiscount(decimal)	Total = Total * (1 - rate);
+  讀	Order.cs:21	在 TestShop.Domain.Order.ApplyDiscount(decimal)	Total = Total * (1 - rate);
+  讀	Order.cs:22	在 TestShop.Domain.Order.ApplyDiscount(decimal)	return Total;
+  讀	Checkout.cs:32	在 TestShop.Services.Checkout.Run(TestShop.Domain.Customer, System.Collections.Generic.List<TestShop.Domain.OrderLine>, string)	if (_gateway.Charge(order.Total))
+  讀	Checkout.cs:35	在 TestShop.Services.Checkout.Run(TestShop.Domain.Customer, System.Collections.Generic.List<TestShop.Domain.OrderLine>, string)	_lastAmount = order.Total;

@@ -1,0 +1,8 @@
+bin/
+obj/
+*.user
+dist/
+*.zip
+docs/manual.html
+docs/manual.pdf
+docs/CodeAtlas使用說明.html

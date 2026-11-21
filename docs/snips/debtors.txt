@@ -1,0 +1,40 @@
+類別 GodDemo.GodForm
+  欄位 txtExposure  (第 16–16 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 txtGain  (第 17–17 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 btnSave  (第 18–18 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 _ini  (第 19–19 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 _exposure  (第 20–20 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 _gain  (第 21–21 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 _lotId  (第 23–23 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 _unusedCounter  (第 24–24 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 _log  (第 25–25 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  欄位 _written  (第 26–26 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  建構子 GodForm()  (第 28–31 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  方法 btnSave_Click(object, System.EventArgs)  (第 33–33 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  方法 LoadSettings()  (第 35–40 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  方法 SaveSettings()  (第 42–48 行)
+      最後編輯:Alice 2026-11-21 060a5389 fix: 批號不可為空
+      上幾代:Carol(2026-11-21)、Bob(2026-11-21)
+  方法 UpdateUi()  (第 50–50 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  方法 AddWafer()  (第 52–52 行)
+      最後編輯:Carol 2026-11-21 75c85e36 refactor: 調整儲存流程與晶圓計數
+      上幾代:Alice(2026-11-21)
+  方法 GetWaferCount()  (第 53–53 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  方法 ResetWafer()  (第 54–54 行)
+      最後編輯:Alice 2026-11-21 3faf2bc3 feat: 建立檢測主畫面與範例專案
+  方法 SetLot(string)  (第 56–56 行)

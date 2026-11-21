@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeAtlas 函式流程</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+#tabs{display:flex;gap:4px;margin:6px 0}
+#tabs button{border-radius:6px 6px 0 0}#tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}#tabs button:disabled{opacity:.45;cursor:not-allowed}
+#work{flex:1;display:flex;min-height:0}
+#view{flex:1;overflow:auto;padding:10px;background:var(--bg);border-right:1px solid var(--line)}
+#view svg{max-width:none}
+#editor{width:38%;min-width:260px;display:flex;flex-direction:column;padding:8px;background:var(--card);min-height:0}
+#src{flex:1;width:100%;font:12px/1.45 Consolas,monospace;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px;resize:none}
+.msg{padding:8px 12px}.err{color:#dc2626}
+#methodList{overflow:auto;flex:1;margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <a href="/">🏠 總覽</a>
+  <a href="/classes">類別圖與關係圖</a>
+  <a href="/flow" class="cur">函式流程</a>
+  <a href="/canvas">流程畫布</a>
+  <a href="/god">God Class 解剖</a>
+  <a href="/clones">重複程式碼</a>
+  <span class="grow"></span><span id="status" class="mut"></span>
+</header>
+<div id="layout">
+  <aside id="side">
+    <div class="side-title">選擇方法</div>
+    <input id="q" type="search" placeholder="搜尋方法,例:Checkout.Run">
+    <div id="qCount" class="mut small"></div>
+    <div id="methodList"></div>
+  </aside>
+  <section id="main">
+    <div id="bar">
+      <div class="row">
+        <label>展開被呼叫方法 <input type="number" id="expand" value="1" min="0" max="6"> 層</label>
+        <label class="chk"><input type="checkbox" id="ext"> 顯示外部(.NET 框架)呼叫</label>
+        <label>呼叫樹層數 <input type="number" id="depth" value="3" min="1" max="8"></label>
+        <label class="chk"><input type="checkbox" id="wantState"> 產生狀態圖</label>
+        <label class="chk"><input type="checkbox" id="wantData"> 產生資料流</label>
+        <button id="go" type="button">重新產生</button>
+      </div>
+      <div class="row mut small">狀態圖與資料流是依程式碼推測的,較耗時,所以要勾選才會產生。</div>
+    </div>
+    <div id="tabs"></div>
+    <div class="row" id="tools" style="padding:0 12px">
+      <label>語法 <select id="syntax"></select></label>
+      <button id="redraw" type="button">依右側文字重繪</button>
+      <label>補充敘述 <input id="note" type="text" size="22" placeholder="輸入後按「插入」"></label>
+      <button id="ins" type="button">插入到游標處</button>
+      <button id="copy" type="button">複製文字</button>
+      <button id="dlText" type="button">下載文字</button>
+      <button id="dlSvg" type="button">下載 SVG</button>
+      <span id="toolMsg" class="mut"></span>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="work">
+      <div id="view"><div class="msg mut">請從左邊選一個方法。</div></div>
+      <div id="editor"><div class="small mut" style="margin-bottom:4px">圖的文字(可直接編輯,再按「依右側文字重繪」)</div><textarea id="src" spellcheck="false"></textarea></div>
+    </div>
+  </section>
+</div>
+<script src="/assets/mermaid.min.js"></script>
+<script src="/flow.js"></script>
+</body>
+</html>

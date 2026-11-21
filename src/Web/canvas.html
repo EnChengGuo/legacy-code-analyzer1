@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeAtlas 流程畫布</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+#flows{overflow:auto;max-height:34%;border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
+.fl{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px}
+.fl .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#side .fl input{width:auto;flex:none}
+#side .fl input[type=color]{width:28px;height:22px;padding:0;border:1px solid var(--line);background:none}
+.fl button{padding:1px 6px;font-size:12px}
+.sw{display:inline-block;width:20px;height:20px;border-radius:4px;border:1px solid #0003;cursor:pointer;vertical-align:middle;margin-right:3px}
+#sideTop{display:flex;flex-direction:column;min-height:0;flex:1}
+</style>
+</head>
+<body>
+<header>
+  <a href="/">🏠 總覽</a>
+  <a href="/classes">類別圖與關係圖</a>
+  <a href="/flow">函式流程</a>
+  <a href="/canvas" class="cur">流程畫布</a>
+  <a href="/god">God Class 解剖</a>
+  <a href="/clones">重複程式碼</a>
+  <span class="grow"></span><span id="status" class="mut"></span>
+</header>
+<div id="layout">
+  <aside id="side" style="width:300px">
+    <div id="sideTop">
+      <div class="side-title">加入流程到畫布</div>
+      <input id="q" type="search" placeholder="搜尋方法,例:Checkout.Run">
+      <div id="qCount" class="mut small"></div>
+      <div id="methodList"></div>
+    </div>
+    <div class="side-title" style="margin-top:8px">畫布上的流程</div>
+    <div id="flows"><div class="mut small">還沒有流程。點上方的方法加入。</div></div>
+  </aside>
+  <section id="main">
+    <div id="bar">
+      <div class="row">
+        <label>展開被呼叫方法 <input type="number" id="expand" value="0" min="0" max="6"> 層</label>
+        <button id="relayout" type="button" title="只重排沒被你拖拉過的流程">重新排版(保留拖過的)</button>
+        <button id="relayoutAll" type="button">全部重新排版</button>
+        <button id="fit" type="button">縮放到全部</button>
+        <span class="grp">群組:</span>
+        <button id="group" type="button" title="先用 Shift+拖曳框選,或按住 Ctrl 點選多個節點">把選取的節點群組</button>
+        <button id="ungroup" type="button">取消選取的群組</button>
+      </div>
+      <div class="row">
+        <span class="grp">合併:</span>
+        <span class="mut small">勾選左邊兩個以上的流程 →</span>
+        <label class="chk"><input type="checkbox" id="dedupe" checked> 相同敘述的節點合為一個</label>
+        <button id="merge" type="button">合併選取的流程</button>
+        <span class="grp" style="margin-left:12px">便利貼:</span>
+        <button id="addNote" type="button">＋ 貼一張</button>
+        <span id="noteColors"></span>
+        <span class="mut small">(點兩下編輯,選取後按顏色可換色)</span>
+      </div>
+      <div class="row">
+        <span class="grp">版面:</span>
+        <select id="layList"></select>
+        <button id="laySave" type="button">儲存</button><button id="layLoad" type="button">載入</button><button id="layDel" type="button">刪除</button>
+        <button id="layExp" type="button">匯出檔案</button>
+        <label class="small">匯入檔案 <input id="layImp" type="file" accept=".json,application/json"></label>
+        <button id="svg" type="button">下載 SVG</button>
+        <span id="msg" class="mut"></span>
+      </div>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="cy"></div>
+  </section>
+</div>
+<script src="/assets/cytoscape.min.js"></script>
+<script src="/assets/dagre.min.js"></script>
+<script src="/assets/cytoscape-dagre.js"></script>
+<script src="/common.js"></script>
+<script src="/canvas.js"></script>
+</body>
+</html>

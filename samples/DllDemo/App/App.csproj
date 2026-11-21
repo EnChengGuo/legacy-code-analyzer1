@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net48</TargetFramework><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup><Reference Include="Lib"><HintPath>..\lib\Lib.dll</HintPath></Reference></ItemGroup>
+</Project>

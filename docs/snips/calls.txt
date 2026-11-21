@@ -1,0 +1,10 @@
+方法 TestShop.Services.Checkout.Run(TestShop.Domain.Customer, System.Collections.Generic.List<TestShop.Domain.OrderLine>, string)
+被呼叫(誰呼叫它):
+呼叫(它呼叫誰):
+  → TestShop.Services.OrderService.Create(TestShop.Domain.Customer)(1 處)
+    → TestShop:M:TestShop.Domain.Order.#ctor(1 處)
+    → TestShop.Domain.Order.ApplyDiscount(decimal)(1 處)
+    → TestShop.Domain.Customer.DiscountRate()(1 處)
+  → TestShop.Domain.Order.AddLine(TestShop.Domain.OrderLine)(1 處)
+  → TestShop.Services.PaymentGateway.Charge(decimal)(1 處)
+  → TestShop.Domain.Order.ApplyDiscount(decimal)(2 處)

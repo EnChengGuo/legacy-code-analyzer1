@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>CodeAtlas 使用說明</title>
+<style>
+@page { size: A4; margin: 18mm 16mm 18mm 16mm; @bottom-center { content: "CodeAtlas 使用說明 · " counter(page); font-size: 8pt; color: #888; } }
+:root { --ink:#1f2430; --mut:#5b6472; --line:#d9dde3; --acc:#1d4ed8; --bg:#f4f6f9; --warn:#fff4d6; --ok:#e6f6ec; --bad:#fdeaea; }
+* { box-sizing: border-box; }
+html { font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans CJK TC", sans-serif; color: var(--ink); font-size: 10.5pt; line-height: 1.7; }
+body { margin: 0; }
+h1 { font-size: 20pt; margin: 0 0 8pt; padding-bottom: 6pt; border-bottom: 2px solid var(--acc); page-break-before: always; page-break-after: avoid; }
+h1.first { page-break-before: auto; }
+h2 { font-size: 14pt; margin: 18pt 0 6pt; color: var(--acc); page-break-after: avoid; }
+h3 { font-size: 11.5pt; margin: 12pt 0 4pt; page-break-after: avoid; }
+p { margin: 5pt 0; }
+ul, ol { margin: 4pt 0 4pt 18pt; padding: 0; } li { margin: 2pt 0; }
+code { font-family: Consolas, "Courier New", monospace; font-size: 9.2pt; background: var(--bg); padding: 0 3pt; border-radius: 3px; }
+pre { font-family: Consolas, "Courier New", monospace; font-size: 8.4pt; line-height: 1.45; background: #f7f8fa; border: 1px solid var(--line); border-radius: 5px; padding: 6pt 8pt; white-space: pre-wrap; word-break: break-all; page-break-inside: avoid; margin: 6pt 0; }
+pre.cmd { background: #10151c; color: #e8edf3; border-color: #10151c; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0; font-size: 9.5pt; page-break-inside: avoid; }
+th, td { border: 1px solid var(--line); padding: 3pt 6pt; text-align: left; vertical-align: top; }
+th { background: var(--bg); }
+td.n { text-align: right; font-variant-numeric: tabular-nums; }
+figure { margin: 8pt 0; page-break-inside: avoid; text-align: center; }
+figure img { max-width: 100%; border: 1px solid var(--line); border-radius: 4px; }
+figcaption { font-size: 9pt; color: var(--mut); margin-top: 3pt; }
+.box { border-left: 4px solid var(--acc); background: var(--bg); padding: 5pt 9pt; margin: 8pt 0; page-break-inside: avoid; border-radius: 0 4px 4px 0; }
+.box.warn { border-color: #d4a017; background: var(--warn); }
+.box.ok { border-color: #1f9d55; background: var(--ok); }
+.box.bad { border-color: #d64545; background: var(--bad); }
+.box.book { border-color: #7c3aed; background: #f3effd; font-size: 9.6pt; }
+.box b.t { display: block; margin-bottom: 2pt; }
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; }
+.cover h1 { border: 0; font-size: 34pt; page-break-before: auto; margin-bottom: 4pt; }
+.cover .sub { font-size: 14pt; color: var(--mut); }
+.cover .meta { margin-top: 28pt; color: var(--mut); font-size: 10pt; }
+.toc { columns: 1; } .toc li { list-style: none; margin: 1pt 0; } .toc ul { margin-left: 14pt; } .toc a { color: var(--ink); text-decoration: none; }
+.tag { display: inline-block; font-size: 8.5pt; border-radius: 3px; padding: 0 5pt; background: #e8edf5; color: #334; }
+.cols { display: flex; gap: 10pt; } .cols > div { flex: 1; min-width: 0; }
+svg text { font-family: "Microsoft JhengHei", sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- ======================= 封面 ======================= -->
+<section class="cover">
+  <h1 class="first">CodeAtlas</h1>
+  <div class="sub">C# 程式碼語意分析工具 · 使用說明</div>
+  <div class="sub" style="font-size:11pt;margin-top:6pt">離線、免安裝、全繁體中文 — 以 Roslyn 在 .NET Framework 4.8 上直接執行</div>
+  <div class="meta">
+    版本:{{version}}<br>
+    文件日期:{{date}}<br>
+    範例一律使用隨附的自建測試專案(<code>samples</code> 資料夾),不含任何公司程式碼。<br>
+    <br>
+    <b>請先讀本文附錄 C「免責聲明」與附錄 D「尚未驗證的項目」。</b>
+  </div>
+</section>
+
+<!-- ======================= 目錄 ======================= -->
+<h1>目錄</h1>
+<div class="toc">
+<ul>
+<li><a href="#c1">1　這是什麼、為什麼這樣做</a></li>
+<li><a href="#c2">2　安裝與啟動(離線)</a></li>
+<li><a href="#c3">3　載入專案,以及用原始碼取代 DLL</a></li>
+<li><a href="#c4">4　找符號、找參考、呼叫階層、影響分析</a></li>
+<li><a href="#c5">5　總覽儀表板、編譯診斷、全文搜尋</a></li>
+<li><a href="#c6">6　程式碼品質分析</a>
+  <ul>
+  <li>6.1　品質度量(CC、MI、巢狀、WMC、Ca、Ce)</li>
+  <li>6.2　死碼偵測</li>
+  <li>6.3　循環相依</li>
+  <li>6.4　重複程式碼偵測</li>
+  <li>6.5　God Class 解剖</li>
+  <li>6.6　冤親債主</li>
+  </ul></li>
+<li><a href="#c7">7　類別圖與關係圖</a></li>
+<li><a href="#c8">8　函式流程與流程畫布</a></li>
+<li><a href="#c9">9　AI 問答:搭配 Copilot 使用</a>
+  <ul>
+  <li>9.1　Serena MCP 是什麼(白話版)</li>
+  <li>9.2　Roslyn 與 Serena 的關係</li>
+  <li>9.3　為什麼 Serena 不能直接和離線版結合</li>
+  <li>9.4　CodeAtlas 的 AI 上下文</li>
+  <li>9.5　怎麼節省 token:本機量測</li>
+  <li>9.6　完整流程示範</li>
+  <li>9.7　正例與反例</li>
+  </ul></li>
+<li><a href="#c10">10　限制與疑難排解</a></li>
+<li><a href="#ca">附錄 A　指令總表</a></li>
+<li><a href="#cb">附錄 B　延伸閱讀與查證紀錄</a></li>
+<li><a href="#cc">附錄 C　免責聲明</a></li>
+<li><a href="#cd">附錄 D　尚未驗證的項目</a></li>
+</ul>
+</div>
+
+<!-- ======================= 1 ======================= -->
+<h1 id="c1">1　這是什麼、為什麼這樣做</h1>
+<p>CodeAtlas 是一個給 C# 專案用的<b>程式碼語意分析工具</b>。「語意」的意思是:它不是把程式碼當文字搜尋,而是像編譯器一樣讀懂它——知道某個名字指的是哪個類別、哪個方法,誰呼叫了誰,哪個欄位被讀、哪個被寫。</p>
+<p>它的目標情境很具體:公司的大型 .NET Framework 4.8 專案,電腦<b>完全離線</b>、<b>不能安裝任何東西</b>,只保證有 .NET 4.8、Visual Studio 和 Copilot。在這個限制下,CodeAtlas 做到:</p>
+<ul>
+<li>符號瀏覽、找參考(分開讀與寫)、呼叫階層、多層影響分析;</li>
+<li>品質度量、死碼、循環相依、重複程式碼、God Class 解剖、冤親債主;</li>
+<li>類別圖、關係圖、函式流程圖(循序圖、活動圖、狀態圖、資料流)與可手動整理的流程畫布;</li>
+<li>產生給 Copilot 的「AI 上下文」——短、準、只給簽章,需要時再讀指定函式的內文。</li>
+</ul>
+
+<h2>1.1　為什麼不直接內嵌 Serena</h2>
+<p>一開始的想法是把 Serena(一套讓 AI 具備「像 IDE 一樣看懂程式碼」能力的開源工具)放進來。評估後決議<b>不內嵌</b>,改用 Roslyn 直接在 net48 上跑。原因在第 9.3 節有逐點說明,這裡先給結論:Serena 需要先安裝 uv 與 Python 環境、處理 C# 時需要 .NET 10 以上的執行環境、語言伺服器在首次使用時需要下載——這三件事都和「離線、不能安裝、只有 .NET 4.8」直接衝突。</p>
+<p>所以 CodeAtlas 的做法是:<b>用 Roslyn(微軟的 C# 編譯器平台)的程式介面,自己實作 Serena 背後那一層「語言伺服器」做的事</b>,並把結果整理成人看得懂的網頁與 AI 看得懂的短文字。</p>
+
+<div class="box"><b class="t">這份文件怎麼讀</b>
+第 2、3 章讓你把工具跑起來;第 4~8 章是功能;第 9 章專談和 Copilot 搭配;附錄 B 是各知識點的延伸書單(書名、作者、出版資訊都已上網查證,查證紀錄也列在那裡)。每個功能都附實際執行的畫面或輸出,<b>輸出都來自隨附的測試專案,不是編造的</b>。</div>
+
+<!-- ======================= 2 ======================= -->
+<h1 id="c2">2　安裝與啟動(離線)</h1>
+<h2>2.1　需要什麼</h2>
+<ul>
+<li>Windows,已有 .NET Framework 4.8(Windows 10 以後通常已內建);</li>
+<li>任何現代瀏覽器(Edge、Chrome 皆可),用來看網頁介面;</li>
+<li>要用「冤親債主」功能時,需要 <code>git</code>(CodeAtlas 會依序找:PATH、Git for Windows 安裝位置、Visual Studio 內附的 git)。</li>
+</ul>
+<p><b>不需要</b>:網路、系統管理員權限、安裝程式、Python、Java、Node。</p>
+
+<h2>2.2　只拿 Release 去別的電腦用</h2>
+<p>可以。整個發佈資料夾(<code>CodeAtlas</code>)就是一份完整的免安裝版,包含:</p>
+<table>
+<tr><th>內容</th><th>說明</th></tr>
+<tr><td><code>CodeAtlas.exe</code> 與 <code>*.dll</code></td><td>程式本體與 Roslyn 等相依元件。<b>請整個資料夾一起複製</b>,只複製 exe 會缺 DLL。</td></tr>
+<tr><td><code>Web\</code>、<code>Assets\</code></td><td>網頁介面與離線的圖形函式庫(Cytoscape、dagre、Mermaid)。缺了它們網頁會是空白。</td></tr>
+<tr><td><code>啟動 CodeAtlas.bat</code></td><td>把 .sln 或 .csproj 拖到它上面,就會啟動並開啟瀏覽器。</td></tr>
+<tr><td><code>samples\</code></td><td>本文所有範例用的自建測試專案。</td></tr>
+<tr><td>本說明 PDF</td><td></td></tr>
+</table>
+<p>這個免安裝版已實際用「解壓縮到另一個資料夾再執行」的方式測試過(見附錄 D)。</p>
+
+<h2>2.3　啟動</h2>
+<p>最簡單:把你的 <code>.sln</code> 檔拖到 <code>啟動 CodeAtlas.bat</code> 上。或在命令列:</p>
+<pre class="cmd">CodeAtlas.exe serve 你的方案.sln 5173 --open</pre>
+<p><code>serve</code> 會在本機(<code>localhost</code>)啟動網頁,預設埠號 5173;加上 <code>--open</code> 會自動開瀏覽器。它只聽本機,不對外開放,也不需要系統管理員權限。結束時在視窗按 <kbd>Ctrl</kbd>+<kbd>C</kbd>。</p>
+<p>網頁的頂端有固定的導覽列,每一頁的最左邊都是 <b>🏠 總覽</b>,按了就回到首頁。</p>
+<figure><img src="{{img:01-dashboard}}"><figcaption>圖 2-1　首頁:總覽儀表板(用測試專案 TestShop 產生)。頂端導覽列的「🏠 總覽」在每一頁都在。</figcaption></figure>
+
+<!-- ======================= 3 ======================= -->
+<h1 id="c3">3　載入專案,以及用原始碼取代 DLL</h1>
+<h2>3.1　載入方式</h2>
+<p>所有指令的第二個參數都是 <code>.sln</code> 或 <code>.csproj</code>。CodeAtlas <b>不依賴 MSBuild 或 Visual Studio 是否已開啟</b>:它自己讀專案檔,找出要編譯的 .cs 檔與參考的 DLL,交給 Roslyn。</p>
+<ul>
+<li>舊式與 SDK 風格的 <code>.csproj</code> 都支援;</li>
+<li>專案間的參照(<code>ProjectReference</code>)會建立成真正的跨專案語意,所以影響分析可以跨專案追;</li>
+<li><code>Reference</code> 的 <code>HintPath</code> 與 SDK 風格的 <code>PackageReference</code>(從本機 <code>.nuget\packages</code> 快取找 DLL)都會處理,找不到會警告;</li>
+<li>.NET Framework 的核心組件(mscorlib、System、System.Windows.Forms 等)直接取用執行環境裡的那份。</li>
+</ul>
+<pre class="cmd">CodeAtlas.exe symbols samples\TestShop.sln</pre>
+<pre>{{snip:symbols}}</pre>
+
+<h2>3.2　選擇性加入 DLL 的原始碼,取代掉 DLL</h2>
+<p>你的專案可能參照了公司內部的 DLL,而你手上剛好有那份 DLL 的原始碼。只靠 DLL,CodeAtlas 看得到它的型別簽章,但看不到內部、也追不進去。加上 <code>--source</code>,就會用原始碼<b>取代</b>那個 DLL 參照,分析就能穿過去。</p>
+<pre class="cmd">CodeAtlas.exe refs samples\DllDemo\DllDemo.sln Greeter.Hello
+CodeAtlas.exe refs samples\DllDemo\DllDemo.sln Greeter.Hello --source Lib=samples\DllDemo\Lib\Lib.csproj</pre>
+<p>沒有 <code>--source</code>(App 專案只參照 <code>Lib.dll</code>):</p>
+<pre>{{snip:source-without}}</pre>
+<p>加上 <code>--source Lib=…\Lib.csproj</code>:</p>
+<pre>{{snip:source-with}}</pre>
+<ul>
+<li><code>--source DLL名稱=位置</code>:DLL 名稱不含 <code>.dll</code>;位置可以是 <code>.csproj</code>,也可以是一個資料夾(會取裡面所有 .cs,略過 bin、obj);可重複指定多個。</li>
+<li>也可以在方案旁放一個 <code>codeatlas.sources</code> 文字檔,每行一個 <code>DLL名稱=位置</code>,以 <code>#</code> 開頭是註解。這樣每次不用打參數。</li>
+<li>若指定的 DLL 沒有被任何專案參照,會提示並略過。</li>
+</ul>
+<div class="box warn"><b class="t">注意</b>被取代的原始碼若再依賴別的 DLL,也可以一併用 <code>--source</code> 取代;沒取代的就仍以 DLL 形式參照。原始碼與 DLL 的版本不一致時,分析的是「你手上的原始碼」,不是實際執行的 DLL。</div>
+
+<!-- ======================= 4 ======================= -->
+<h1 id="c4">4　找符號、找參考、呼叫階層、影響分析</h1>
+<p>名稱可以寫短的(<code>Order</code>、<code>Order.ApplyDiscount</code>),也可以寫完整顯示名稱。名稱不唯一時,CodeAtlas 會列出候選,<b>不會亂猜</b>。</p>
+
+<h2>4.1　尋找符號 <code>find</code></h2>
+<pre class="cmd">CodeAtlas.exe find samples\TestShop.sln Order</pre>
+<pre>{{snip:find}}</pre>
+
+<h2>4.2　找參考,分開讀與寫 <code>refs</code></h2>
+<p>每一處使用都會分類:<b>讀</b>、<b>寫</b>、<b>讀寫</b>(<code>+=</code>、<code>++</code>、<code>ref</code> 參數)、<b>呼叫</b>、<b>建立物件</b>、<b>型別使用</b>、<b>方法群組參照</b>(把方法當委派傳)。</p>
+<pre class="cmd">CodeAtlas.exe refs samples\TestShop.sln Order.Total</pre>
+<pre>{{snip:refs}}</pre>
+<p>注意 <code>Total += …</code> 判為「讀寫」、<code>Total = …</code> 判為「寫」、<code>return Total</code> 判為「讀」。</p>
+
+<h2>4.3　呼叫階層 <code>calls</code></h2>
+<p>同時給兩個方向:誰呼叫它(被呼叫),以及它呼叫誰。可指定層數,遇到循環會標示 <code>[循環]</code>。</p>
+<pre class="cmd">CodeAtlas.exe calls samples\TestShop.sln Checkout.Run 2</pre>
+<pre>{{snip:calls}}</pre>
+
+<h2>4.4　多層影響分析 <code>impact</code></h2>
+<p>「我改了這個,會牽動誰?」往上一層一層追所有直接與間接使用者,每個成員只出現一次。透過<b>介面</b>與<b>覆寫</b>的呼叫也會連回實作(例如 <code>OrderService.Create</code> 是被當成 <code>IOrderService</code> 呼叫的,仍然追得到)。</p>
+<pre class="cmd">CodeAtlas.exe impact samples\TestShop.sln Customer.DiscountRate</pre>
+<pre>{{snip:impact}}</pre>
+<div class="box warn"><b class="t">它追不到什麼</b>影響分析追的是「呼叫與使用」這種靜態關係。<b>反射、依賴注入容器、事件訂閱的字串名稱、設定檔裡的類別名稱</b>都追不到。重大修改前,請把它當成「至少會影響這些」,不是「只會影響這些」。</div>
+<div class="box book"><b class="t">延伸閱讀</b>
+想在不熟的大型程式裡安全地改動,可看 Michael Feathers《Working Effectively with Legacy Code》(Prentice Hall,2004;ISBN 9780131177055)。書中談如何把遺留程式碼放進測試、以及一套打破相依性的手法。(附錄 B)</div>
+
+<!-- ======================= 5 ======================= -->
+<h1 id="c5">5　總覽儀表板、編譯診斷、全文搜尋</h1>
+<h2>5.1　總覽儀表板</h2>
+<p>首頁(圖 2-1)一頁看完:專案數、原始檔數、型別與成員數、高可信度死碼數、循環相依群組數、編譯診斷數;以及最複雜的方法前 15 名、最大的類別前 15 名、死碼清單、循環相依、診斷。也可以產生成單一檔案:</p>
+<pre class="cmd">CodeAtlas.exe dashboard 你的方案.sln 總覽.html</pre>
+<p>輸出的 HTML 是自給自足的單一檔案,可以直接寄給同事開啟。</p>
+
+<h2>5.2　編譯診斷 <code>diag</code></h2>
+<p>列出編譯器的警告與錯誤。若出現大量「找不到型別」,通常是缺了某個 DLL 或 NuGet 套件(CodeAtlas 會在載入時提示),不是程式碼真的有錯。</p>
+<pre class="cmd">CodeAtlas.exe diag samples\TestShop.sln</pre>
+<pre>{{snip:diag}}</pre>
+
+<h2>5.3　全文搜尋 <code>search</code></h2>
+<p>不分大小寫,逐行搜尋方案內的所有原始檔,顯示檔名與行號。語意搜尋(找符號、找參考)請用第 4 章的指令;全文搜尋用在字串、註解、設定鍵這類不屬於符號的東西。</p>
+<pre class="cmd">CodeAtlas.exe search samples\TestShop.sln discount</pre>
+<pre>{{snip:search}}</pre>
+
+<!-- ======================= 6 ======================= -->
+<h1 id="c6">6　程式碼品質分析</h1>
+<p>本章六個項目都用隨附的測試專案示範。<b>所有「推測」性質的結果都會在該節標明</b>,請當作線索,不要當作判決。</p>
+
+<h2>6.1　品質度量</h2>
+<p>指令:<code>metrics [N]</code>;網頁:首頁的表格,以及類別圖頁右側的符號資訊欄。</p>
+<table>
+<tr><th>縮寫</th><th>名稱</th><th>意思</th><th>怎麼算</th></tr>
+<tr><td>CC</td><td>循環複雜度</td><td>程式裡有多少條獨立的執行路徑。越高越難測、越容易出錯。</td><td>1 + <code>if</code>、<code>while</code>、<code>for</code>、<code>foreach</code>、每個 <code>case</code>、<code>catch</code>、<code>?:</code>、<code>&amp;&amp;</code>、<code>||</code>、<code>??</code> 的個數</td></tr>
+<tr><td>巢狀</td><td>最大巢狀深度</td><td>最深的 <code>if/for/while/switch/try</code> 層數。<code>else if</code> 不算多一層。</td><td>—</td></tr>
+<tr><td>MI</td><td>維護性指數 0~100</td><td>越高越好維護。</td><td>171 − 5.2·ln(V) − 0.23·CC − 16.2·ln(LOC),再換算成 0~100</td></tr>
+<tr><td>WMC</td><td>加權方法數</td><td>一個類別裡所有方法 CC 的總和,反映類別整體的複雜度。</td><td>Σ CC</td></tr>
+<tr><td>Ca</td><td>傳入耦合</td><td>有多少<b>其他類別</b>用到它(被依賴的程度)。</td><td>不重複的使用者類別數</td></tr>
+<tr><td>Ce</td><td>傳出耦合</td><td>它用到多少<b>其他類別</b>(依賴別人的程度)。</td><td>不重複的被使用類別數</td></tr>
+</table>
+<pre class="cmd">CodeAtlas.exe metrics samples\TestShop.sln 4</pre>
+<pre>{{snip:metrics}}</pre>
+<p>實際核對:<code>Pricing.Score</code> 裡有 <code>if</code>、<code>&amp;&amp;</code>、<code>for</code>、兩個 <code>case</code>、一個 <code>?:</code>,手算 CC = 1+1+1+1+2+1 = 7,工具也是 7;<code>for</code> 在 <code>if</code> 裡,巢狀 2。</p>
+<div class="box warn"><b class="t">MI 是近似值</b>標準公式裡的 Halstead 體積 V,CodeAtlas 是用語法標記估算的(識別字與字面值當運算元,其餘當運算子),所以數字<b>會和 Visual Studio 內建的不同</b>。拿來比較「同一份程式裡誰比較差」可以,拿來和別的工具的數字互比不行。</div>
+<div class="box book"><b class="t">延伸閱讀</b>
+・循環複雜度的原始論文:Thomas J. McCabe, “A Complexity Measure”, <i>IEEE Transactions on Software Engineering</i>, SE-2(4), 1976, pp. 308–320。<br>
+・WMC、耦合等物件導向度量出自 Shyam Chidamber 與 Chris Kemerer 的研究。我查證到的是 MIT 的工作論文 “Towards a Metrics Suite for Object Oriented Design”(1991)與修訂版 “A metrics suite for object oriented design (revised)”(1993);正式期刊版本我<b>沒能在網路上確認</b>,所以不在此列出頁碼。(附錄 B)</div>
+
+<h2>6.2　死碼偵測</h2>
+<p>指令:<code>dead</code>;網頁:首頁的「死碼」表。找出「方案裡沒有任何人使用」的成員與型別,並<b>分可信度</b>:</p>
+<table>
+<tr><th>可信度</th><th>條件</th><th>為什麼</th></tr>
+<tr><td><b>高</b></td><td>私有,且整個方案都沒有參照</td><td>私有成員只有自己的類別看得到,沒人用就是沒人用。</td></tr>
+<tr><td><b>中</b></td><td>內部(internal)且沒有參照;或私有欄位「只被寫入、從未被讀取」</td><td>內部成員仍可能被「友人組件」使用。</td></tr>
+<tr><td><b>低</b></td><td>公開成員,方案內沒有參照</td><td>可能被方案外的程式、反射或序列化使用。</td></tr>
+</table>
+<p>有屬性標註(<code>[…]</code>)、或名稱像事件處理常式(<code>btn_Click</code>)的,會再<b>降一級</b>,因為框架或反射可能呼叫它。覆寫、介面實作、<code>Main</code>、列舉成員、抽象成員不列入。</p>
+<pre class="cmd">CodeAtlas.exe dead samples\TestShop.sln</pre>
+<pre>{{snip:dead}}</pre>
+<div class="box book"><b class="t">延伸閱讀</b>
+刪死碼之前通常要先有測試的保護。Feathers《Working Effectively with Legacy Code》談的就是沒有測試時怎麼動手;Martin Fowler《Refactoring》第 2 版(Addison-Wesley,2018)收錄一整套小步驟、可逆的重構手法。(附錄 B)</div>
+
+<h2>6.3　循環相依</h2>
+<p>指令:<code>cycles</code>。找出互相依賴的群組,分<b>專案</b>、<b>命名空間</b>、<b>型別</b>三層。用「強連通元件」演算法,只列出大小超過 1 的群組(自己依賴自己不算)。</p>
+<pre class="cmd">CodeAtlas.exe cycles samples\TestShop.sln</pre>
+<pre>{{snip:cycles}}</pre>
+<p>型別層級的小循環(例如兩個類別互相持有)很常見,未必是問題;<b>專案與命名空間層級的循環</b>才是結構性的警訊,因為它讓這些單位無法獨立編譯、測試或發佈。</p>
+<div class="box book"><b class="t">延伸閱讀</b>
+Robert C. Martin《Clean Architecture》(Pearson,2017)第 14 章「Component Coupling」談無循環相依原則、穩定相依原則與穩定抽象原則——這正是 Ca、Ce 與「不穩定度 = Ce / (Ca + Ce)」背後的想法。(附錄 B)</div>
+
+<h2>6.4　重複程式碼偵測</h2>
+<p>指令:<code>clones [標記數] [最少行數]</code>;網頁:<code>/clones</code>。它把每個方法轉成「語法標記」序列,用固定長度的視窗比對,連續命中的視窗合併成一段。<b>預設會把變數名稱與常數視為相同</b>,所以「複製貼上後改了名字」的重複也抓得到;勾選「只找完全相同」則要求一字不差。</p>
+<pre class="cmd">CodeAtlas.exe clones samples\GodDemo\GodDemo.sln 40 6</pre>
+<pre>{{snip:clones}}</pre>
+<figure><img src="{{img:14-clones}}"><figcaption>圖 6-1　重複程式碼頁:左右並排顯示兩處重複的原始碼。這組標為「名稱或常數不同」,因為 Dup1 / Dup2 的變數名稱不同。</figcaption></figure>
+<ul>
+<li>比對長度越小越敏感,但雜訊越多;預設 40 個標記、至少 6 行。</li>
+<li>預設略過 <code>.Designer.cs</code> 等自動產生的檔案(那裡面本來就是大量相似的程式),可勾選納入。</li>
+<li>一長串完全相同的樣板(同一視窗出現 40 次以上)會被當作樣板略過。</li>
+</ul>
+<div class="box warn"><b class="t">它找得到與找不到</b>找得到:結構相同、只有名稱或常數不同的複製貼上。找不到:邏輯相同但寫法不同(例如一個用 <code>for</code>、一個用 LINQ)的「語意重複」。</div>
+<div class="box book"><b class="t">延伸閱讀</b>
+David Thomas、Andrew Hunt《The Pragmatic Programmer》20 週年紀念版(Addison-Wesley,2019),Topic 9「DRY—The Evils of Duplication」。作者後來表示 DRY 原本談的是「知識」不要重複,而不只是「別複製貼上」。(附錄 B)</div>
+
+<h2>6.5　God Class 解剖</h2>
+<p>網頁:<code>/god</code>。針對一個過大的類別(例如你那個約 6 萬行的畫面類別),拆成四張表。左側清單依行數排序,選一個類別即可。下面用隨附的 <code>GodDemo</code>(一個迷你的 WinForms 畫面類別)示範。</p>
+
+<h3>(1)欄位清冊</h3>
+<p>每個欄位與屬性:被幾個成員讀、被幾個成員寫、類別內與外部各用了幾次,並標旗標:<b>未使用</b>、<b>只寫不讀</b>、<b>只被一個成員使用</b>(可能其實該是區域變數)、<b>樞紐</b>(被超過門檻比例的成員共用)。</p>
+<figure><img src="{{img:09-god-inv}}"><figcaption>圖 6-2　欄位清冊。<code>_unusedCounter</code> 標「未使用」,<code>_written</code> 標「只寫不讀」。</figcaption></figure>
+
+<h3>(2)職責分群</h3>
+<p>把方法依「共用的欄位」與「互相呼叫」綁成群;每一群是一個可能獨立出去的職責。被太多成員共用的欄位或方法(例如寫記錄的 <code>Log</code>)視為「樞紐」,不拿來綁群,否則所有方法會被它綁成一大團。頁面上方的「樞紐門檻」滑桿可以調整。另外算出 <b>LCOM4</b>(分成幾個互不相連的群),越大表示這個類別做了越多件不相干的事。</p>
+<figure><img src="{{img:10-god-cl}}"><figcaption>圖 6-3　職責分群。測試專案被分成「晶圓與批號」「儲存設定」「Mark」,以及互不相干的 Dup1、Dup2。</figcaption></figure>
+
+<h3>(3)儲存對照</h3>
+<p>推測哪些欄位對應到「儲存」(設定檔、資料庫、序列化),依三種線索:<b>屬性標註</b>(如 <code>[XmlElement]</code>、<code>[DataMember]</code>)、<b>字串鍵</b>(<code>ini.Write("Exposure", _exposure…)</code>、<code>_gain = … ini.Read("Gain")</code>、<code>row["欄位名"]</code>)、<b>同名字串</b>。</p>
+<figure><img src="{{img:11-god-sto}}"><figcaption>圖 6-4　儲存對照:<code>_exposure</code> 讀自與寫入儲存鍵「Exposure」,<code>_gain</code> 對應「Gain」,並附行號。</figcaption></figure>
+
+<h3>(4)UI 對照</h3>
+<p>列出控制項(WinForms 的 <code>Control</code>、<code>ToolStripItem</code>,WPF 的 <code>UIElement</code>),它們的<b>事件掛接</b>(<code>btnSave.Click += …btnSave_Click</code>)、被哪些成員使用,以及<b>控制項屬性與資料欄位之間的賦值方向</b>(<code>_exposure = double.Parse(txtExposure.Text)</code> 是「畫面 → 資料」;<code>txtGain.Text = _gain.ToString()</code> 是「資料 → 畫面」)。</p>
+<figure><img src="{{img:12-god-ui}}"><figcaption>圖 6-5　UI 對照。</figcaption></figure>
+<div class="box warn"><b class="t">這些都是推測</b>儲存對照、UI 對照與職責分群是依程式寫法推出來的線索。例如儲存鍵若是用變數組出來的字串、事件是用反射或框架設定的,就找不到。你那個 6 萬行的類別,分群可能合成一大群——可以把「樞紐門檻」調低,把共用很廣的欄位排除再看。每張表都可以篩選並<b>匯出 CSV</b>(含 BOM,Excel 直接開啟中文不會亂碼)。</div>
+<div class="box book"><b class="t">延伸閱讀</b>
+・John Ousterhout《A Philosophy of Software Design》第 2 版(Yaknyam Press,2021):談「深」的模組與複雜度從哪裡來,可和 God Class 的拆分互相對照。<br>
+・Fowler《Refactoring》收錄「Large Class」「Long Method」等壞味道與對應的手法(拆類別、搬移方法)。(附錄 B)</div>
+
+<h2>6.6　冤親債主</h2>
+<p>指令:<code>debtors &lt;類別&gt;</code>;網頁:God Class 頁的「冤親債主」分頁,以及類別圖頁右側欄的按鈕。</p>
+<p>情境:接手一支沒人敢動的程式,裡面一堆成員<b>沒有註解</b>。想問問「這是誰寫的?最後是誰改的?」CodeAtlas 找出<b>沒寫註解的成員</b>(沒有前置註解、也沒有同行的尾端註解),對每個成員用 <code>git log -L</code> 追蹤「那幾行」的歷史,列出<b>最後編輯者</b>與<b>上幾代</b>編輯過的人。</p>
+<p>用 <code>-L</code> 追蹤行範圍的好處是:不會被同一個檔案裡別人改了別的地方干擾。</p>
+<p>要自己試,執行隨附的指令碼,它會在暫存資料夾建出有三位作者(Alice、Bob、Carol)歷史的 <code>GodDemo</code>:</p>
+<pre class="cmd">powershell -ExecutionPolicy Bypass -File samples\GodDemo\建立git歷史.ps1
+CodeAtlas.exe debtors "%TEMP%\GodDemo-git\GodDemo.sln" GodDemo.GodForm</pre>
+<pre>{{snip:debtors}}</pre>
+<p>看 <code>SaveSettings()</code>:最後是 Alice 改的,再前一代是 Carol,最早是 Bob。<code>AddWafer()</code>:最後 Carol,前一代 Alice。有註解的成員(如 <code>_waferCount</code>、<code>Log</code>)已被排除。</p>
+<figure><img src="{{img:13-god-debt}}"><figcaption>圖 6-6　冤親債主分頁:成員、最後編輯者(含日期與提交說明)、上幾代。</figcaption></figure>
+<div class="box warn"><b class="t">限制</b>
+・找不到 git 時會明講,不會亂猜。<br>
+・「作者」取自 git 紀錄的作者欄,同一個人用不同名字或信箱會被當成不同人(CodeAtlas 沒有套用 <code>.mailmap</code>)。<br>
+・每個成員要跑一次 <code>git log -L</code>,成員很多時會慢,所以預設只查前 60 個。<br>
+・超過 2000 行的巨大類別,右側欄只看宣告處的歷史,成員請看各自的編輯者。<br>
+・這是「查事實」不是「找人算帳」——最後編輯者不等於寫壞的人。</div>
+<div class="box book"><b class="t">延伸閱讀</b>
+Adam Tornhill《Your Code as a Crime Scene》第 2 版(Pragmatic Bookshelf,2024):用版本控制歷史分析程式碼的「熱點」與團隊如何影響架構。需要熟悉 git。(附錄 B)</div>
+
+<!-- ======================= 7 ======================= -->
+<h1 id="c7">7　類別圖與關係圖</h1>
+<p>網頁:<code>/classes</code>。左側是<b>檔案大綱</b>(可搜尋檔名、類別名或成員名),中間是圖,右側是<b>符號資訊欄</b>(點選類別後出現)。</p>
+<figure><img src="{{img:02-classes}}"><figcaption>圖 7-1　類別圖:焦點類別 <code>AOI_Form</code>。往上有 <code>BaseForm</code> 與 <code>IWaferSource</code>,往下有兩層子類別,內層類別 <code>AOI_CountWafer_Parameters</code> 與它的成員 <code>CalculateWaferParam</code> 也畫出來了。</figcaption></figure>
+
+<h2>7.1　三種檢視</h2>
+<ul>
+<li><b>類別圖(含成員)</b>:每個類別一個方塊,分欄位、屬性、方法三區;</li>
+<li><b>關係圖(只顯示名稱)</b>:只顯示類別名稱,適合看整體結構;</li>
+<li><b>Mermaid</b>:產生 Mermaid 文字並繪製,可複製、下載 SVG,貼進文件或 wiki。</li>
+</ul>
+
+<h2>7.2　符號說明:三類關係</h2>
+<p>類別之間的關係分成<b>四組</b>,各自可以開關、各自設定層數。同一對類別只畫最強的一種:<b>繼承 &gt; 擁有 &gt; 依賴</b>。</p>
+<figure>
+{{legend-svg}}
+<figcaption>圖 7-2　類別圖的符號。箭頭與菱形的方向都和 UML 慣例一致。</figcaption>
+</figure>
+<table>
+<tr><th>組</th><th>種類</th><th>CodeAtlas 怎麼判斷</th></tr>
+<tr><td rowspan="2">繼承</td><td>繼承</td><td>繼承自某個類別(介面繼承介面也算)。</td></tr>
+<tr><td>實作</td><td>實作某個介面。</td></tr>
+<tr><td rowspan="3">擁有</td><td>組合</td><td>欄位或屬性是單一物件,且擁有者自己 <code>new</code> 出來(初始值或在自己的成員裡指派)。</td></tr>
+<tr><td>聚合</td><td>集合或陣列型別(<code>List&lt;X&gt;</code>、<code>X[]</code>),或是由建構子參數傳入的。</td></tr>
+<tr><td>關聯</td><td>其他持有關係(例如公開可寫的屬性)。</td></tr>
+<tr><td>依賴</td><td>—</td><td>其餘的使用(方法參數、區域變數、呼叫、建立物件),且不屬於上面兩組。</td></tr>
+<tr><td>巢狀</td><td>—</td><td>外層類別包含內層類別(外層 → 內層)。</td></tr>
+</table>
+<div class="box warn"><b class="t">這是啟發式判斷</b>組合與聚合的區別在 C# 裡本來就看不出來(語言沒有這個概念),CodeAtlas 用「誰建立它」來推。例如由工廠方法回傳的物件會被判成「關聯」而不是「組合」。</div>
+<div class="box book"><b class="t">延伸閱讀</b>
+類別圖各種線與菱形的正式意義,可查 Martin Fowler《UML Distilled》第 3 版(Addison-Wesley,2003;ISBN 0321193687),涵蓋 UML 2。(附錄 B)</div>
+
+<h2>7.3　不讓大類別爆圖</h2>
+<ul>
+<li><b>每區只顯示前 N 項</b>(預設 8),超過寫「… 另 k 項」。<b>隱藏 private</b> 可再縮短;</li>
+<li><b>拉遠自動只顯示名稱</b>(縮放小於 0.45 倍);</li>
+<li>類別數超過上限(預設 150)時,只留關聯最多的,並提示你縮小範圍或指定焦點;</li>
+<li><b>在圖中尋找</b>:輸入文字,符合的類別(含其成員)會亮起,其餘變淡;<kbd>Enter</kbd> 跳到第一個符合的。</li>
+</ul>
+
+<h2>7.4　子類別層數、巢狀類別、焦點</h2>
+<ul>
+<li><b>焦點類別</b>:輸入類別名稱,或在左側大綱點一下,或在圖上<b>雙擊</b>某個類別。只畫它與它周邊。</li>
+<li><b>各類關係的層數</b>:繼承往上、往下各 N 層(所以子類別的子類別也畫得出來);擁有、依賴、巢狀也各自設層數。圖 7-1 設的是繼承 2 層。</li>
+<li><b>巢狀類別</b>獨立成一個方塊,畫出它自己的成員,並用點線連到外層。</li>
+</ul>
+
+<h2>7.5　點選與資訊欄</h2>
+<p>點選一個類別:<b>不相干的類別與線會變淡</b>,只留它和直接相鄰的。右側同時顯示符號資訊:位置、說明(XML 註解的 summary)、類別度量(WMC、Ca、Ce)、<b>最後編輯者與上幾代</b>、沒寫註解的成員數與「查冤親債主」按鈕。</p>
+<figure><img src="{{img:03-classes-info}}"><figcaption>圖 7-3　點選 <code>GodForm</code> 後,右側的符號資訊欄(使用有 git 歷史的 GodDemo)。</figcaption></figure>
+
+<h2>7.6　檔案大綱搜尋</h2>
+<p>左側大綱把類別依「所在檔案」分組。搜尋框同時比對<b>檔名、類別名、成員名</b>:搜 <code>CalculateWafer</code> 會找到包含該方法的 <code>AOI_CountWafer_Parameters</code>,並註明「含 CalculateWaferParam」。點一個項目就把它設成焦點。</p>
+
+<h2>7.7　便利貼、存版面、下載 SVG</h2>
+<ul>
+<li><b>便利貼</b>:按「＋ 貼一張」,點兩下編輯(清空文字會刪除),旁邊色盤可換色(先選取便利貼再按顏色,或先選好顏色再新增)。重新產生圖時便利貼會保留。</li>
+<li><b>版面存取</b>:「儲存」會把圖上每個類別的位置、便利貼、縮放,以及上方所有設定存成一個命名版面,存在你的 <code>%AppData%\CodeAtlas\layouts</code>;「載入」會原樣還原,<b>不會重新排版</b>。也可「匯出檔案 / 匯入檔案」(.json)給別人。</li>
+<li><b>下載 SVG</b>:把目前畫面重新畫成向量圖。Mermaid 檢視則下載 Mermaid 繪出的 SVG。</li>
+</ul>
+
+<!-- ======================= 8 ======================= -->
+<h1 id="c8">8　函式流程與流程畫布</h1>
+<h2>8.1　函式流程 <code>/flow</code></h2>
+<p>選一個方法,產生五種圖。左邊搜尋選方法,上方可設「展開被呼叫方法幾層」、「顯示外部(.NET 框架)呼叫」。每張圖都有 <b>Mermaid</b> 與 <b>PlantUML</b> 兩種文字,圖的文字可以<b>直接在右側編輯後重繪</b>、插入敘述、複製、下載文字與 SVG。</p>
+
+<h3>8.1.1　循序圖</h3>
+<p>分支畫成 <code>alt</code>(沒有 else 的畫成 <code>opt</code>)、迴圈畫成 <code>loop</code>、<code>switch</code> 每個 case 一段、<code>try/catch</code> 畫成 <code>critical</code>。展開的被呼叫方法會畫出「回傳」箭頭。</p>
+<figure><img src="{{img:04-flow-seq}}"><figcaption>圖 8-1　<code>Checkout.Run</code> 的循序圖(展開 1 層)。可看到 <code>OrderService.Create</code> 內部又呼叫了 <code>Order</code> 與 <code>Customer</code>。</figcaption></figure>
+<pre class="cmd">CodeAtlas.exe flow samples\TestShop.sln Checkout.Run 1</pre>
+<pre>{{snip:flow-seq}}</pre>
+
+<h3>8.1.2　活動圖</h3>
+<p>Mermaid 沒有活動圖,所以 Mermaid 版用流程圖表示;PlantUML 版是真正的活動圖語法(<code>start</code>、<code>if … endif</code>、<code>while</code>、<code>switch</code>)。迴圈會回到判斷點,<code>break</code>、<code>return</code> 也處理了。</p>
+<figure><img src="{{img:05-flow-act}}"><figcaption>圖 8-2　活動圖。</figcaption></figure>
+
+<h3>8.1.3　狀態圖(要勾選才產生)</h3>
+<p>找這個類別裡「列舉型別的欄位或屬性」被賦值的地方,依外圍的 <code>if</code> 與 <code>switch</code> 推出「從哪個狀態轉到哪個狀態、在哪個方法」。建構子或初始值給的是起始狀態。抓不到來源的標「任一狀態」。</p>
+<figure><img src="{{img:06-flow-state}}"><figcaption>圖 8-3　<code>CheckoutState</code> 的狀態圖:起始 Idle;<code>Cancel</code> 把 Paid 轉回 Idle、Paying 轉到 Failed。</figcaption></figure>
+
+<h3>8.1.4　資料流(要勾選才產生)</h3>
+<p>追蹤參數、區域變數、欄位、屬性之間的賦值,以及它們傳進哪些呼叫、哪些被回傳。梯形是參數,圓柱是欄位或屬性,圓角是區域變數,六角是呼叫,體育場形是回傳值;箭頭旁的 L 數字是行號。</p>
+<figure><img src="{{img:07-flow-data}}"><figcaption>圖 8-4　資料流。</figcaption></figure>
+<div class="box warn"><b class="t">狀態圖與資料流是推測</b>所以要勾選才產生。資料流不處理別名、集合裡的內容、<code>ref</code> 的複雜情況;狀態圖只認「列舉欄位 + 賦值 + if/switch」這種寫法。</div>
+
+<h3>8.1.5　呼叫樹</h3>
+<p>往下追被呼叫的方法到指定層數,遇到循環標 <code>[循環]</code>。</p>
+
+<h2>8.2　流程畫布 <code>/canvas</code></h2>
+<p>把好幾張流程放在同一張畫布上,<b>手動拖拉整理</b>、換色比較、合併、貼便利貼。左側上方點方法即可加入,下方是「畫布上的流程」清單。</p>
+<figure><img src="{{img:08-canvas}}"><figcaption>圖 8-5　畫布上放了兩張流程(藍:<code>Checkout.Run</code>;紅:<code>Checkout.Cancel</code>)。</figcaption></figure>
+<h3>排版規則</h3>
+<ul>
+<li>每張流程<b>由上往下</b>排,分支也往下長;有分支就往外擴。</li>
+<li><b>迴圈</b>的回頭線畫成側繞的虛線,不參與排版,所以迴圈佔的空間很小。</li>
+<li><b>你拖過的圖不會被自動排版動到</b>。新加流程只排新的那一張,放在現有內容的右邊。按「重新排版(保留拖過的)」會略過你拖過的流程(清單上標 ✎);要全部重排得按「全部重新排版」並確認。</li>
+<li>拖整個外框是<b>群組拖拉</b>(裡面全部一起動),這不算「拖過」。也可以 <kbd>Shift</kbd>+拖曳框選多個節點,按「把選取的節點群組」自訂群組;選取群組外框後按「取消選取的群組」。</li>
+</ul>
+<h3>換色與合併</h3>
+<ul>
+<li>每張流程有色盤,節點與外框一起換色,方便比較兩支程式。</li>
+<li><b>合併</b>:勾選兩張以上,按「合併選取的流程」。勾選「相同敘述的節點合為一個」時,兩張流程裡文字相同的節點(例如「開始」「結束」或共同的步驟)會合成一個,連線改接過去。合併後會自動排版成新的一張。</li>
+</ul>
+<h3>便利貼、存版面、SVG</h3>
+<p>同第 7.7 節:便利貼可貼在畫布任何位置、點兩下編輯、換色;版面可儲存、載入、匯出、匯入;「下載 SVG」輸出向量圖。</p>
+<div class="box warn"><b class="t">PlantUML 還沒有實際繪製驗證</b>CodeAtlas 離線版不內建 PlantUML,所以頁面對 PlantUML 只提供文字(可複製、下載),請貼到你有的 PlantUML 工具(例如 Visual Studio 的擴充或 plantuml.jar)。文字的語法我檢查過產出格式,但<b>沒有用 PlantUML 程式實際繪製過</b>(附錄 D)。</div>
+
+<!-- ======================= 9 ======================= -->
+<h1 id="c9">9　AI 問答:搭配 Copilot 使用</h1>
+<p>本章回答三個問題:Serena 是什麼?為什麼這個專案沒有直接用它?CodeAtlas 的「AI 上下文」怎麼讓 AI 讀得少、答得準,並且節省 token?</p>
+
+<h2>9.1　Serena MCP 是什麼(白話版)</h2>
+<p>先把三個名詞講清楚。</p>
+<table>
+<tr><th>名詞</th><th>白話說明</th></tr>
+<tr><td><b>LSP</b><br>(Language Server Protocol)</td><td>編輯器和「懂某種語言的程式」之間的一套溝通規則。你在 Visual Studio Code 或其他編輯器裡按「跳到定義」「找所有參考」,背後常常就是編輯器問語言伺服器,語言伺服器回答「在第幾個檔案第幾行」。</td></tr>
+<tr><td><b>MCP</b><br>(Model Context Protocol)</td><td>AI 應用程式(例如 Claude Code、Claude Desktop、Visual Studio Code、Cursor)和「外部工具」之間的一套溝通規則。工具用 MCP 向 AI 說「我能做這幾件事」,AI 需要時就來呼叫。</td></tr>
+<tr><td><b>符號</b></td><td>程式碼裡有名字的東西:類別、方法、欄位、屬性。「符號層級」的意思是:操作的單位是「這個方法」,而不是「第 120 到 140 行」或「這串文字」。</td></tr>
+</table>
+<p><b>Serena</b>(開源專案 oraios/serena)就是把這兩者接起來:它用語言伺服器(LSP)去理解程式碼,再包成 MCP 工具,交給 AI 使用。官方形容它是「給 AI 用的 IDE」:讓 AI 不必把整個檔案讀進來,也能「找到這個符號」「找出誰引用了它」「只改這個方法」。</p>
+<h3>它給 AI 哪些工具(依官方文件)</h3>
+<table>
+<tr><th>類別</th><th>主要工具</th><th>做什麼</th></tr>
+<tr><td>符號工具</td><td><code>find_symbol</code>、<code>get_symbols_overview</code>、<code>find_referencing_symbols</code>、<code>find_declaration</code>、<code>find_implementations</code></td><td>找符號、列出檔案的大綱、找誰引用了它、找定義與實作</td></tr>
+<tr><td></td><td><code>replace_symbol_body</code>、<code>insert_after_symbol</code>、<code>insert_before_symbol</code>、<code>rename_symbol</code>、<code>safe_delete_symbol</code></td><td>以符號為單位改寫、插入、跨檔改名、刪除</td></tr>
+<tr><td>檔案工具</td><td><code>read_file</code>、<code>list_dir</code>、<code>find_file</code>、<code>search_for_pattern</code>、<code>replace_content</code> 等</td><td>一般的檔案讀取與搜尋(在 Claude Code 這類環境裡,官方說通常預設停用)</td></tr>
+<tr><td>記憶工具</td><td><code>write_memory</code>、<code>read_memory</code>、<code>list_memories</code> 等</td><td>把專案筆記存下來,下次任務再讀</td></tr>
+<tr><td>其他</td><td><code>execute_shell_command</code>、<code>activate_project</code>、<code>onboarding</code> 等</td><td>執行指令、切換專案、第一次認識專案</td></tr>
+</table>
+<p>官方文件說多數設定只會啟用其中一部分,標示 optional 的預設不啟用。完整且最新的清單請以官方文件為準(附錄 B 列出網址)。</p>
+<h3>它怎麼跑</h3>
+<ul>
+<li>官方說 <b>uv</b>(一個 Python 套件管理工具)是唯一必要的前置安裝;快速開始的指令是 <code>uv tool install -p 3.13 serena-agent</code> 然後 <code>serena init</code>。</li>
+<li>有兩種後端:預設是<b>語言伺服器(LSP)</b>,免費開源;另一個是付費的 <b>JetBrains 外掛</b>。</li>
+<li>支援的語言官方文件寫「超過 40 種」,包含 C#。</li>
+<li>官方也提醒:不要透過 MCP 或外掛市集安裝 Serena。</li>
+<li>授權:Serena 本體是 GPL-3.0-or-later,其中的 SolidLSP 部分是 MIT;合在一起散布時整體適用 GPL(依官方 README)。</li>
+</ul>
+<div class="box"><b class="t">一句話</b>Serena = 「語言伺服器」+「MCP 包裝」。AI 靠它用「符號」而不是「整個檔案」來看程式,所以讀得少、改得準。</div>
+
+<h2>9.2　Roslyn 與 Serena 的關係</h2>
+<p><b>Roslyn</b> 是微軟的 C# 編譯器平台:它把 C# 原始碼解析成語法樹,並提供「語意模型」——知道每個名字指的是哪個符號、型別是什麼。Visual Studio 裡的 C# 智慧提示、跳到定義、找所有參考,底層都靠它。</p>
+<p>關係是:<b>Serena 處理 C# 時,底層用的就是以 Roslyn 為基礎的 C# 語言伺服器</b>(官方語言支援頁寫:C# 預設使用「Roslyn language server」,語言代號 <code>csharp</code>;也可改用 OmniSharp)。換句話說,「Roslyn 負責看懂 C#,LSP 負責把答案傳出來,MCP 負責讓 AI 來問」。</p>
+<figure>
+{{arch-svg}}
+<figcaption>圖 9-1　兩條路線的比較。Serena:AI → MCP → 語言伺服器(LSP)→ Roslyn。CodeAtlas:直接呼叫 Roslyn,省掉 LSP 與 MCP 兩層,輸出給人看的網頁與給 AI 看的短文字。</figcaption>
+</figure>
+<p>CodeAtlas 做的就是:<b>跳過 LSP 與 MCP 那兩層,直接用 Roslyn 的程式介面</b>(<code>Microsoft.CodeAnalysis</code>)做同樣類型的查詢——找符號、找參考、呼叫關係——而且是在 .NET Framework 4.8 上跑。</p>
+
+<h2>9.3　為什麼 Serena 不能直接和離線版結合</h2>
+<p>以下每一點都是依 Serena 官方文件所寫的需求,對照你的環境(離線、不能安裝、只有 .NET 4.8、Visual Studio 與 Copilot):</p>
+<table>
+<tr><th>#</th><th>Serena 的需求(官方文件)</th><th>你的環境</th><th>結果</th></tr>
+<tr><td>1</td><td>必須先安裝 <b>uv</b>(唯一必要的前置條件),並以它安裝 Serena。</td><td>不能安裝任何東西。</td><td>衝突</td></tr>
+<tr><td>2</td><td>C# 的語言伺服器需要 <b>.NET v10 以上</b>(Windows 上還需要 PowerShell 7 以上)。</td><td>只保證有 .NET Framework 4.8。</td><td>衝突</td></tr>
+<tr><td>3</td><td>許多語言伺服器的相依檔案「在第一次啟用該語言專案時下載」。官方有提供受限網路的做法(事先下載),但沒有說明 C# 是否需要。</td><td>完全離線。</td><td>不確定,風險高</td></tr>
+<tr><td>4</td><td>Serena 是一個 <b>MCP 伺服器</b>,需要一個支援 MCP 的 AI 用戶端來連它。</td><td>用 Copilot。你們的 Visual Studio / Copilot 版本是否能設定 MCP 伺服器,我沒有驗證。</td><td>未驗證</td></tr>
+<tr><td>5</td><td>授權:本體 GPL-3.0-or-later,合併散布時整體適用 GPL。</td><td>要把它隨公司工具散布。</td><td>需要法務評估</td></tr>
+<tr><td>6</td><td>官方文件沒有說明是否能完全離線運作。</td><td>必須離線。</td><td>未說明</td></tr>
+</table>
+<p>所以結論不是「Serena 不好」,而是:<b>在「離線、不能安裝、只有 .NET 4.8」這組限制下,它的前置需求(第 1、2 點)直接做不到</b>。CodeAtlas 是為這組限制量身做的替代:一個資料夾、拖進去就能跑。</p>
+<div class="box ok"><b class="t">如果你的環境之後放寬</b>例如允許安裝 uv 與 .NET 10、能連網下載語言伺服器、Copilot 能接 MCP,那麼 Serena 與 CodeAtlas 並不衝突:Serena 擅長讓 AI「自己動手查、改」,CodeAtlas 擅長讓「人」看圖、看度量、看歷史。兩者可以並用。</div>
+
+<h2>9.4　CodeAtlas 的 AI 上下文</h2>
+<p>Copilot 沒辦法直接呼叫 CodeAtlas(第 9.3 節第 4 點),所以做法是:<b>你用 CodeAtlas 產生一段短文字,貼給 Copilot</b>(貼進對話,或存成檔案附加)。這段文字就叫 AI 上下文。設計上有三個重點:</p>
+<ol>
+<li><b>只給簽章與位置,不給內文。</b>每個成員一行:修飾詞、型別、名稱、參數、所在檔案與行號範圍,以及它的 CC。</li>
+<li><b>大類別自動截斷。</b>成員預設最多列 40 個,超過寫「另有 k 個成員未列出」,並提示改指定「類別.成員」取得個別上下文。</li>
+<li><b>需要內文時,由 AI(或你)指定目標再讀。</b>用 <code>body</code> 指令只讀那一個方法,還可以再指定行號範圍,只讀方法裡的一段。</li>
+</ol>
+<p>你的類別都很大,所以這樣設計:<b>摘要要短,細節按需讀取。</b></p>
+<pre class="cmd">CodeAtlas.exe context 方案.sln 類別名稱          &lt;- 類別的摘要
+CodeAtlas.exe context 方案.sln 類別名稱.方法名稱  &lt;- 單一方法的摘要(含誰呼叫它、它呼叫誰)
+CodeAtlas.exe body    方案.sln 類別名稱.方法名稱  &lt;- 讀整個方法的內文
+CodeAtlas.exe body    方案.sln 類別名稱.方法名稱 36 44  &lt;- 只讀第 36~44 行</pre>
+<p>類別摘要的實際輸出(測試專案 <code>Checkout</code>):</p>
+<pre>{{snip:context}}</pre>
+<p>方法摘要的實際輸出:</p>
+<pre>{{snip:context-method}}</pre>
+<div class="box"><b class="t">關於「AI 上下文只給簽章、不給內文」</b>這是刻意的設計,不是遺漏。如果你預期內容應該很多,而看到的很短,多半是因為這份摘要只列簽章與關係;內文要用 <code>body</code> 另外取。</div>
+
+<h2>9.5　怎麼節省 token:本機量測</h2>
+<div class="box warn"><b class="t">先說清楚這份數字是什麼</b>以下是在<b>本機量「字元數」與「行數」</b>得到的,<b>沒有呼叫 Claude 或 Copilot</b>,所以<b>不是真實的 token 數</b>。字元數與 token 數不是固定比例:英文程式碼大致是幾個字元一個 token,中文字則通常一個字就超過一個 token。請把下表當作「相對大小」的參考。</div>
+<p>量測對象是 CodeAtlas 自己的原始碼(12 個 .cs 檔、約 18.4 萬字元),比測試專案複雜得多。比較「把整個類別的原始碼貼給 AI」與「只給摘要」:</p>
+<table>
+<tr><th>類別</th><th>整個類別原始碼(字元)</th><th>行數</th><th>AI 摘要(字元)</th><th>摘要 ÷ 原始碼</th></tr>
+<tr><td>Analyzer</td><td class="n">15,566</td><td class="n">294</td><td class="n">2,219</td><td class="n">14%</td></tr>
+<tr><td>Metrics</td><td class="n">17,703</td><td class="n">302</td><td class="n">1,147</td><td class="n">6%</td></tr>
+<tr><td>FlowBuilder</td><td class="n">11,873</td><td class="n">199</td><td class="n">1,585</td><td class="n">13%</td></tr>
+<tr><td>DiagramBuilder</td><td class="n">12,244</td><td class="n">190</td><td class="n">1,490</td><td class="n">12%</td></tr>
+<tr><td>GodClass</td><td class="n">21,629</td><td class="n">232</td><td class="n">1,124</td><td class="n">5%</td></tr>
+<tr><td>Server</td><td class="n">18,563</td><td class="n">285</td><td class="n">2,320</td><td class="n">12%</td></tr>
+<tr><td>ProjectLoader</td><td class="n">11,514</td><td class="n">184</td><td class="n">948</td><td class="n">8%</td></tr>
+</table>
+<p>再看「方法層級」——摘要是為了讓 AI 決定要不要讀內文:</p>
+<table>
+<tr><th>方法</th><th>摘要(字元)</th><th>內文(字元)</th><th>內文行數</th></tr>
+<tr><td>Analyzer.References</td><td class="n">332</td><td class="n">396</td><td class="n">9</td></tr>
+<tr><td>Metrics.Cycles</td><td class="n">584</td><td class="n">2,022</td><td class="n">35</td></tr>
+<tr><td>GodClass.Analyze</td><td class="n">623</td><td class="n">19,378</td><td class="n">197</td></tr>
+</table>
+<ul>
+<li><b>類別層級省得多</b>:摘要只有整個類別的 5%~14%。</li>
+<li><b>方法層級要看情況</b>:很短的方法(<code>References</code> 只有 9 行),摘要比內文還長,直接讀內文更划算;很長的方法(<code>Analyze</code> 有 197 行、近兩萬字元),先看摘要再決定要不要讀、讀哪一段,差很多。這就是為什麼 <code>body</code> 還提供行號範圍。</li>
+<li>整個專案的原始碼約 18.4 萬字元;AI 若為了回答一個問題把全部讀進來,是上表摘要的上百倍。</li>
+</ul>
+
+<h2>9.6　完整流程示範</h2>
+<p>情境:你想問 Copilot「<code>Checkout.Run</code> 在付款失敗時會怎樣?」。</p>
+<table>
+<tr><th>步驟</th><th>你做的事</th><th>輸入(目標)</th><th>輸出</th></tr>
+<tr><td>1</td><td>先看類別摘要,確認有這個方法、在哪幾行</td><td><code>context 方案.sln TestShop.Services.Checkout</code></td><td>類別簽章、成員清單(含行號、CC)、WMC 等(上面第 9.4 節的第一段輸出)</td></tr>
+<tr><td>2</td><td>看這個方法的關係:誰呼叫它、它呼叫誰</td><td><code>context 方案.sln TestShop.Services.Checkout.Run</code></td><td>方法簽章、CC、被使用/使用了誰(第二段輸出)</td></tr>
+<tr><td>3</td><td>只讀「付款失敗」那一段內文</td><td><code>body 方案.sln TestShop.Services.Checkout.Run 36 44</code></td><td>只有第 36~44 行,見下方</td></tr>
+<tr><td>4</td><td>把步驟 2 與 3 的輸出貼給 Copilot,再問問題</td><td>貼上的文字 + 你的問題</td><td>Copilot 依你給的範圍回答</td></tr>
+</table>
+<p>步驟 3 的實際輸出:</p>
+<pre>{{snip:body}}</pre>
+<p>步驟 4 你貼進 Copilot 的內容,大致像這樣(摘要 + 那一段內文 + 問題):</p>
+<pre>以下是 C# 方法 TestShop.Services.Checkout.Run 的資訊(由 CodeAtlas 產生):
+
+[貼上步驟 2 的輸出]
+
+[貼上步驟 3 的輸出]
+
+問題:當 _gateway.Charge 回傳 false 時,這個方法最後回傳什麼?_state 會變成什麼?
+請只根據上面提供的內容回答;如果需要別的方法內文,請告訴我要讀哪個方法,我再提供。</pre>
+<figure>
+{{flow-svg}}
+<figcaption>圖 9-2　搭配 Copilot 的完整流程與架構:你用 CodeAtlas(Roslyn)從方案取出「短摘要」,需要時再取「指定段落的內文」,一起貼給 Copilot。</figcaption>
+</figure>
+<div class="box warn"><b class="t">這裡的「Copilot 回答」我沒有實測</b>這個流程中,CodeAtlas 產生的步驟 1~3 我都實際跑過、輸出如上。但步驟 4 把內容貼給 Copilot 之後 Copilot 會答得多好,我<b>沒有測過</b>(沒有動用任何 AI 服務),請你實際試試。</div>
+
+<h2>9.7　正例與反例</h2>
+<div class="cols">
+<div class="box ok"><b class="t">正例:先摘要,再按需讀</b>
+<ol>
+<li>貼類別摘要(約 1~2 千字元);</li>
+<li>AI 或你指定「想看哪個方法」;</li>
+<li>用 <code>body</code> 只讀該方法,太長就再縮成行號範圍。</li>
+</ol>
+總量:摘要 + 一小段內文。每多問一個問題,只增加一小段。</div>
+<div class="box bad"><b class="t">反例:整份貼上</b>
+<ol>
+<li>把整個 .cs 檔或整個類別貼進對話;</li>
+<li>對話裡其他問題也一直帶著這份內容;</li>
+<li>類別很大時超過 AI 一次能讀的長度,被截斷或忽略。</li>
+</ol>
+總量:每個問題都帶整份(上表:5~20 倍的字元)。</div>
+</div>
+<div class="box warn"><b class="t">什麼時候摘要「不」划算</b>
+・方法很短(如 <code>References</code>),直接給內文就好;<br>
+・你問的問題本來就需要看整個類別的每一行(例如「逐行 code review」),摘要幫不上忙;<br>
+・類別很小,摘要和原始碼差不多大。<br>
+這些情況用 <code>body</code> 直接取內文,不要硬套摘要流程。</div>
+
+<!-- ======================= 10 ======================= -->
+<h1 id="c10">10　限制與疑難排解</h1>
+<h2>10.1　已知限制</h2>
+<ul>
+<li><b>只在小型測試專案上驗證過。</b>你的大型專案(尤其約 6 萬行的類別)的速度、記憶體、可讀性都沒量過。圖太大時,請用焦點與層數縮小範圍。</li>
+<li>語意分析抓不到<b>反射、依賴注入、字串型的類別或方法名稱、事件在設定檔裡的掛接</b>。</li>
+<li>泛型、擴充方法、<code>partial</code>、<code>dynamic</code> 等複雜情況,我只做了基本處理與有限測試。</li>
+<li>MI 是近似值;死碼的「低」可信度是提醒不是結論。</li>
+<li>儲存對照、UI 對照、職責分群、狀態圖、資料流、組合與聚合的判斷,都是依寫法的推測。</li>
+</ul>
+<h2>10.2　常見問題</h2>
+<table>
+<tr><th>狀況</th><th>可能原因與處理</th></tr>
+<tr><td>網頁一片空白</td><td>只複製了 <code>CodeAtlas.exe</code> 而沒有 <code>Web</code>、<code>Assets</code> 資料夾。請整個資料夾一起複製。</td></tr>
+<tr><td>啟動時顯示「找不到專案檔」或「缺少參考 DLL」</td><td>方案或專案檔裡的路徑在這台電腦不存在。補上缺的 DLL,或用 <code>--source</code> 指向原始碼。</td></tr>
+<tr><td>診斷裡有大量「找不到型別」</td><td>缺 DLL 或 NuGet 套件(<code>.nuget\packages</code> 快取裡沒有)。分析結果在那些地方會不完整。</td></tr>
+<tr><td>瀏覽器打不開 <code>localhost:5173</code></td><td>埠號被占用,換一個:<code>serve 方案.sln 5200</code>。</td></tr>
+<tr><td>「冤親債主」說找不到 git</td><td>確認 <code>git</code> 在 PATH,或安裝 Git for Windows(Visual Studio 通常內附)。</td></tr>
+<tr><td>中文名稱的類別找不到</td><td>請用 0.1 以後的版本(舊版曾有 GET 請求中文亂碼的問題,已修正)。</td></tr>
+<tr><td>版面載入後位置跑掉</td><td>儲存版面時的類別在目前的設定下不存在或被篩掉;沒有儲存位置的類別會自動排版。</td></tr>
+</table>
+
+<!-- ======================= 附錄 A ======================= -->
+<h1 id="ca">附錄 A　指令總表</h1>
+<p>通則:<code>CodeAtlas.exe &lt;指令&gt; &lt;方案.sln|專案.csproj&gt; [參數]</code>。任何指令都可加 <code>--source DLL名稱=原始碼位置</code>。</p>
+<table>
+<tr><th>指令</th><th>說明</th></tr>
+<tr><td><code>symbols</code></td><td>列出所有型別</td></tr>
+<tr><td><code>find &lt;名稱&gt;</code></td><td>尋找符號</td></tr>
+<tr><td><code>refs &lt;名稱&gt;</code></td><td>找參考(讀/寫/讀寫/呼叫…)</td></tr>
+<tr><td><code>calls &lt;名稱&gt; [層數]</code></td><td>呼叫階層(預設 2 層)</td></tr>
+<tr><td><code>impact &lt;名稱&gt; [層數]</code></td><td>影響分析(預設 5 層)</td></tr>
+<tr><td><code>diag</code></td><td>編譯診斷</td></tr>
+<tr><td><code>search &lt;文字&gt;</code></td><td>全文搜尋</td></tr>
+<tr><td><code>metrics [N]</code></td><td>品質度量,各列前 N 名(預設 15)</td></tr>
+<tr><td><code>dead</code></td><td>死碼偵測</td></tr>
+<tr><td><code>cycles</code></td><td>循環相依</td></tr>
+<tr><td><code>clones [標記數] [最少行數]</code></td><td>重複程式碼(預設 40 標記、6 行)</td></tr>
+<tr><td><code>debtors &lt;類別&gt;</code></td><td>冤親債主(需要 git)</td></tr>
+<tr><td><code>context &lt;名稱&gt; [上限]</code></td><td>AI 上下文(成員最多列「上限」個,預設 40)</td></tr>
+<tr><td><code>body &lt;名稱&gt; [起行 迄行]</code></td><td>只讀某成員或類別的原始碼,可指定行號範圍</td></tr>
+<tr><td><code>flow &lt;方法&gt; [展開層數]</code></td><td>函式流程(輸出 Mermaid 與 PlantUML 文字)</td></tr>
+<tr><td><code>dashboard [輸出.html]</code></td><td>輸出總覽儀表板</td></tr>
+<tr><td><code>serve [埠號] [--open]</code></td><td>啟動本機網頁(預設 5173)</td></tr>
+<tr><td><code>emit &lt;專案&gt; &lt;輸出.dll&gt;</code></td><td>開發用:把專案編成 DLL(測試 <code>--source</code> 時使用)</td></tr>
+</table>
+<h2>網頁一覽</h2>
+<table>
+<tr><th>網址</th><th>內容</th></tr>
+<tr><td><code>/</code></td><td>🏠 總覽儀表板</td></tr>
+<tr><td><code>/classes</code></td><td>類別圖與關係圖(網址參數:<code>focus=類別</code>、<code>select=類別</code>)</td></tr>
+<tr><td><code>/flow</code></td><td>函式流程(<code>name=方法</code>、<code>tab=seq|act|tree|state|data</code>)</td></tr>
+<tr><td><code>/canvas</code></td><td>流程畫布(<code>name=方法</code>,可重複)</td></tr>
+<tr><td><code>/god</code></td><td>God Class 解剖(<code>name=類別</code>、<code>tab=inv|cl|sto|ui|debt</code>)</td></tr>
+<tr><td><code>/clones</code></td><td>重複程式碼(<code>auto=1</code> 自動開始)</td></tr>
+</table>
+
+<!-- ======================= 附錄 B ======================= -->
+<h1 id="cb">附錄 B　延伸閱讀與查證紀錄</h1>
+<p>下列書籍與論文的書名、作者、出版社與年份,都已於 {{date}} 上網逐一查證(來源網址列在每一項下方)。查證不到或對不上的,<b>沒有列入</b>或已明講。</p>
+<table>
+<tr><th>對應知識點</th><th>書名 / 論文</th><th>作者</th><th>出版資訊</th></tr>
+<tr><td>影響分析、遺留程式碼、死碼</td><td><i>Working Effectively with Legacy Code</i></td><td>Michael C. Feathers</td><td>Prentice Hall,2004(部分書目標示 ©2005);ISBN 9780131177055</td></tr>
+<tr><td>重構、壞味道、拆分類別</td><td><i>Refactoring: Improving the Design of Existing Code</i>,第 2 版</td><td>Martin Fowler(Pearson 與 Fowler 官網載明 Kent Beck 亦列名)</td><td>Addison-Wesley Professional,2018 年 11 月</td></tr>
+<tr><td>CC 循環複雜度</td><td>“A Complexity Measure”</td><td>Thomas J. McCabe</td><td><i>IEEE Transactions on Software Engineering</i>, SE-2(4), 1976, pp. 308–320</td></tr>
+<tr><td>WMC、Ca/Ce 等 OO 度量</td><td>“Towards a Metrics Suite for Object Oriented Design”(1991);“A metrics suite for object oriented design (revised)”(1993)</td><td>Shyam R. Chidamber、Chris F. Kemerer</td><td>MIT 工作論文。<b>期刊版本未能確認</b></td></tr>
+<tr><td>循環相依、穩定相依、不穩定度</td><td><i>Clean Architecture: A Craftsman's Guide to Software Structure and Design</i></td><td>Robert C. Martin</td><td>Pearson,2017;第 14 章 Component Coupling</td></tr>
+<tr><td>重複程式碼(DRY)</td><td><i>The Pragmatic Programmer: Your Journey to Mastery</i>,20 週年紀念版(第 2 版)</td><td>David Thomas、Andrew Hunt</td><td>Addison-Wesley,2019(Pearson 載明 2019 年 7 月;O'Reilly 載明 2019 年 9 月);Topic 9</td></tr>
+<tr><td>冤親債主(版本控制歷史分析)</td><td><i>Your Code as a Crime Scene</i>,第 2 版</td><td>Adam Tornhill</td><td>Pragmatic Bookshelf,2024 年 2 月(各書商標示 2 月至 3 月不等);ISBN 9798888650325</td></tr>
+<tr><td>類別圖符號</td><td><i>UML Distilled: A Brief Guide to the Standard Object Modeling Language</i>,第 3 版</td><td>Martin Fowler</td><td>Addison-Wesley,2003 年 9 月;ISBN 0321193687(個別圖書館目錄標 2004,以出版社與 Fowler 官網的 2003 為準)</td></tr>
+<tr><td>模組設計、複雜度</td><td><i>A Philosophy of Software Design</i>,第 2 版</td><td>John Ousterhout</td><td>Yaknyam Press,2021 年 7 月(2022 年另有 2.01 印次);ISBN 978-1-7321022-1-7</td></tr>
+<tr><td>整體程式建構</td><td><i>Code Complete</i>,第 2 版</td><td>Steve McConnell</td><td>Microsoft Press,2004 年 6 月 9 日</td></tr>
+</table>
+<p>中文譯本的書名與出版社我<b>沒有逐一查證</b>,所以未列出;需要時請以書店的資訊為準。</p>
+<h2>查證來源</h2>
+<ul style="font-size:9pt">
+<li>Refactoring 第 2 版:pearson.com 產品頁(Refactoring: Improving the Design of Existing Code, 2nd edition)、martinfowler.com/books/refactoring.html、oreilly.com 書目</li>
+<li>Working Effectively with Legacy Code:pearson.com 產品頁、oreilly.com 書目(ISBN 0131177052)、archive.org</li>
+<li>Your Code as a Crime Scene 第 2 版:oreilly.com 書目(9798888650837)、各書商書目(ISBN 9798888650325)</li>
+<li>Clean Architecture:pearson.com 產品頁(ISBN 9780134494166)、oreilly.com 第 14 章</li>
+<li>UML Distilled 第 3 版:martinfowler.com/books/uml.html、oreilly.com 書目(0321193687)</li>
+<li>Chidamber 與 Kemerer:archive.org(1991 工作論文)、dspace.mit.edu(1993 修訂版與 1994 論文)</li>
+<li>McCabe 1976:cs.mtsu.edu 所載 PDF、bibsonomy / ifsq 書目</li>
+<li>The Pragmatic Programmer 20 週年紀念版:pearson.com 產品頁、oreilly.com 第 9 條(DRY)</li>
+<li>A Philosophy of Software Design:web.stanford.edu/~ouster 作者頁、worldcat</li>
+<li>Code Complete 第 2 版:microsoftpressstore.com、pearson.com</li>
+<li>Serena:github.com/oraios/serena(README)、oraios.github.io/serena 的 tools 與 programming-languages 兩頁</li>
+</ul>
+
+<!-- ======================= 附錄 C ======================= -->
+<h1 id="cc">附錄 C　免責聲明</h1>
+<ol>
+<li><b>輔助工具,不是判決。</b>CodeAtlas 是程式碼閱讀與分析的輔助工具。它的輸出——包括死碼、重複程式碼、職責分群、儲存對照、UI 對照、狀態圖、資料流、組合/聚合的判斷、MI 指數——都是依程式碼的寫法與靜態分析所做的推測或近似,可能有遺漏、也可能有誤判。<b>在刪除程式碼、重構或發佈之前,請以人工審閱、測試與實際執行結果為準。</b></li>
+<li><b>不保證完整。</b>靜態分析看不到反射、依賴注入、動態載入、字串型別名稱、設定檔與資料庫裡的對應等執行期才決定的行為。</li>
+<li><b>數字僅供比較。</b>本文的字元數量測不是真實的 token 數;MI 是近似值,與 Visual Studio 的結果會不同;各項度量用於同一份程式內相互比較才有意義。</li>
+<li><b>冤親債主是查事實,不是歸責。</b>版本控制紀錄上的作者與最後編輯者,不等於程式有問題時的責任人。請勿將它用於人員績效或問責。</li>
+<li><b>與其他產品無關。</b>本工具與 Serena、Anthropic、Microsoft、GitHub 沒有隸屬或背書關係。文中提到的產品名稱、商標屬於各自所有人。第 9 章關於 Serena 的描述,是依其官方文件於本文日期所寫,內容可能隨版本改變,請以官方文件為準。</li>
+<li><b>隨附的第三方元件</b>(Roslyn、Cytoscape.js、dagre、Mermaid)各依其授權條款使用,授權文字請見各元件原始發行內容。</li>
+<li>使用本工具與本文件所生之任何結果與風險,由使用者自行承擔。</li>
+</ol>
+
+<!-- ======================= 附錄 D ======================= -->
+<h1 id="cd">附錄 D　尚未驗證的項目</h1>
+<p>這份清單誠實列出「我沒有親自驗證過」的事,讓你知道該自己再確認什麼:</p>
+<table>
+<tr><th>項目</th><th>狀況</th></tr>
+<tr><td>在你的大型專案上的速度與記憶體</td><td>只在小型測試專案(最多約 20 個類別)與 CodeAtlas 自己(12 個檔)上跑過。</td></tr>
+<tr><td>PlantUML 實際繪製</td><td>只產生文字,沒有用 PlantUML 程式繪製過。</td></tr>
+<tr><td>Shift+拖曳框選、真實滑鼠拖拉</td><td>用程式模擬事件測過邏輯(標記為已拖過、群組、合併、存載版面都通過),但沒有用真滑鼠操作過。Shift+拖曳框選是 Cytoscape 內建行為,我沒有實測。</td></tr>
+<tr><td>下載的 SVG 是否在各種檢視器都好看</td><td>只驗證了是合法 XML、元素數量對得上、含中文;連線的曲線是近似畫法,箭頭形狀請你目視確認。</td></tr>
+<tr><td>Copilot 實際回答的品質</td><td>沒有動用任何 AI 服務,所以第 9 章「貼給 Copilot 之後會答得如何」沒有測。</td></tr>
+<tr><td>你的 Visual Studio / Copilot 能否設定 MCP</td><td>沒有驗證。</td></tr>
+<tr><td>離線電腦上 git 能不能被找到</td><td>在我的電腦上 PATH 有 git;離線電腦的情況請你確認。</td></tr>
+<tr><td>免安裝版在另一台沒有開發環境的電腦</td><td>只做了「解壓縮到另一個資料夾再執行」;沒有在乾淨的另一台電腦測過。</td></tr>
+<tr><td>Serena 在離線環境能否運作</td><td>官方文件沒有說明。</td></tr>
+<tr><td>Chidamber & Kemerer 期刊版</td><td>沒能在網路上確認,所以只列工作論文。</td></tr>
+</table>
+<p style="margin-top:14pt;color:var(--mut)">— 文件結束 —</p>
+</body>
+</html>

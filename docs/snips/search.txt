@@ -1,0 +1,7 @@
+Order.cs:18  public decimal ApplyDiscount(decimal rate)
+Order.cs:36  public virtual decimal DiscountRate() { return 0m; }
+Order.cs:41  public override decimal DiscountRate() { return 0.1m; }
+Checkout.cs:50  order.ApplyDiscount(0.1m);
+Checkout.cs:55  order.ApplyDiscount(0m);
+OrderService.cs:12  o.ApplyDiscount(c.DiscountRate());
+共 6 筆

@@ -1,0 +1,20 @@
+  [高] 欄位 TestShop.Domain.AOI_Form._params  — 私有且整個方案內沒有任何參照
+  [高] 欄位 TestShop.Domain.AOI_Form._watchers  — 私有且整個方案內沒有任何參照
+  [高] 方法 TestShop.Domain.Pricing.Orphan()  — 私有且整個方案內沒有任何參照
+  [中] 欄位 TestShop.Domain.Pricing._written  — 只有被寫入、從未被讀取
+  [低] 方法 TestShop.Domain.AOI_Form.AOI_CountWafer_Parameters.CalculateWaferParam(int)  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 方法 TestShop.Domain.AOI_Form.AOI_CountWafer_Parameters.Reset()  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 屬性 TestShop.Domain.AOI_Form.Pricing  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 方法 TestShop.Domain.AOI_Form_Special.Extra()  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 類別 TestShop.Domain.AOI_Form_Special2  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 欄位 TestShop.Domain.BaseForm.Title  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 欄位 TestShop.Domain.Cycle1.Other  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 欄位 TestShop.Domain.Cycle2.Other  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 屬性 TestShop.Domain.OrderLine.Sku  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 方法 TestShop.Domain.Pricing.Helper(TestShop.Domain.Cycle1)  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 方法 TestShop.Domain.Pricing.Score(int, bool, int[])  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 類別 TestShop.Domain.VipCustomer.Badge  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 屬性 TestShop.Domain.VipCustomer.Badge.Level  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 類別 TestShop.Services.Checkout  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 方法 TestShop.Services.Checkout.Cancel()  — 公開成員,方案內沒有參照(可能被外部程式使用)
+  [低] 方法 TestShop.Services.Checkout.Run(TestShop.Domain.Customer, System.Collections.Generic.List<TestShop.Domain.OrderLine>, string)  — 公開成員,方案內沒有參照(可能被外部程式使用)

@@ -1,0 +1,5 @@
+方法 TestShop.Domain.Customer.DiscountRate()
+  第 1 層  方法 TestShop.Services.OrderService.Create(TestShop.Domain.Customer)
+  第 2 層  方法 TestShop.Services.Checkout.Run(TestShop.Domain.Customer, System.Collections.Generic.List<TestShop.Domain.OrderLine>, string)
+  第 2 層  方法 TestShop.App.Program.Main()
+共影響 3 個成員

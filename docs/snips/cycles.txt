@@ -1,0 +1,2 @@
+  [型別] 2 個:TestShop.Domain.Cycle1、TestShop.Domain.Cycle2
+共 1 個循環群組

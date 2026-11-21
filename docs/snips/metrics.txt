@@ -1,0 +1,10 @@
+方法(CC 由高到低):
+  CC=7 巢狀=2 行=17 MI=54  TestShop.Domain.Pricing.Score(int, bool, int[])
+  CC=6 巢狀=2 行=38 MI=45  TestShop.Services.Checkout.Run(TestShop.Domain.Customer, System.Collections.Generic.List<TestShop.Domain.OrderLine>, string)
+  CC=3 巢狀=1 行=6 MI=68  TestShop.Domain.Order.ApplyDiscount(decimal)
+  CC=3 巢狀=1 行=12 MI=60  TestShop.Services.Checkout.Cancel()
+類別(WMC 由高到低):
+  WMC=9 Ca=1 Ce=1 成員=5  TestShop.Domain.Pricing
+  WMC=9 Ca=0 Ce=6 成員=6  TestShop.Services.Checkout
+  WMC=4 Ca=4 Ce=2 成員=5  TestShop.Domain.Order
+  WMC=2 Ca=1 Ce=0 成員=3  TestShop.Domain.AOI_Form.AOI_CountWafer_Parameters

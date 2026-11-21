@@ -1,0 +1,15 @@
+# 類別 TestShop.Services.Checkout
+- 位置:Checkout.cs:15-73(專案 TestShop)
+- 簽章:`class Checkout`
+
+## 成員(共 6 個,簽章 + 位置;內文請用 body 指令按需讀取)
+- `private readonly PaymentGateway _gateway`  Checkout.cs:17-17
+- `private readonly OrderService _orders`  Checkout.cs:18-18
+- `private CheckoutState _state`  Checkout.cs:19-19
+- `private decimal _lastAmount`  Checkout.cs:20-20
+- `public decimal Run(Customer c, List<OrderLine> lines, string mode)`  Checkout.cs:22-59  CC=6
+- `public void Cancel()`  Checkout.cs:61-72  CC=3
+
+## 類別度量:WMC=9,Ca=0,Ce=6,行數=50
+
+> 這份摘要約 547 個字元,粗估 273 個 token 以內。方法內文未包含。

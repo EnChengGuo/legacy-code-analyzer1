@@ -1,0 +1,45 @@
+方法 TestShop.Services.Checkout.Run(TestShop.Domain.Customer, System.Collections.Generic.List<TestShop.Domain.OrderLine>, string)
+---- 循序圖 (Mermaid) ----
+sequenceDiagram
+  autonumber
+  actor P1 as 呼叫者
+  participant P2 as Checkout
+  participant P3 as OrderService
+  participant P4 as Order
+  participant P5 as Customer
+  participant P6 as PaymentGateway
+  P1->>P2: Run(c, lines, mode)
+  activate P2
+  P2->>P3: Create(c)
+  activate P3
+    P3->>P4: new Order()
+    P3->>P5: DiscountRate()
+    P3->>P4: ApplyDiscount(c.DiscountRate())
+  P3-->>P2: 回傳
+  deactivate P3
+  loop foreach line in lines
+    P2->>P4: AddLine(line)
+  end
+  critical try
+    P2->>P6: Charge(order.Total)
+  option catch InvalidOperationException
+  end
+  alt switch mode = 'vip'
+    P2->>P4: ApplyDiscount(0.1m)
+  else switch mode = 'none'
+  else switch mode = default
+    P2->>P4: ApplyDiscount(0m)
+  end
+  deactivate P2
+
+---- 活動圖 (Mermaid 流程圖) ----
+flowchart TD
+  S0(["開始"])
+  N1["var order = _orders.Create(c)"]
+  S0 --> N1
+  N2{"foreach line in lines"}
+  N1 --> N2
+  N3["order.AddLine(line)"]
+  N2 -->|是| N3
+  N3 --> N2
+  N4["_state = CheckoutState.Paying"]

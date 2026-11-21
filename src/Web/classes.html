@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeAtlas 類別圖</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <a href="/">🏠 總覽</a>
+  <a href="/classes" class="cur">類別圖與關係圖</a>
+  <a href="/flow">函式流程</a>
+  <a href="/canvas">流程畫布</a>
+  <a href="/god">God Class 解剖</a>
+  <a href="/clones">重複程式碼</a>
+  <span class="grow"></span>
+  <span id="status" class="mut"></span>
+</header>
+
+<div id="layout">
+  <aside id="side">
+    <div class="side-title">檔案大綱</div>
+    <input id="olSearch" type="search" placeholder="搜尋檔名、類別或成員名稱…">
+    <div id="olCount" class="mut small"></div>
+    <div id="outline"></div>
+  </aside>
+
+  <section id="main">
+    <div id="bar">
+      <div class="row">
+        <label>檢視
+          <select id="view">
+            <option value="class">類別圖(含成員)</option>
+            <option value="graph">關係圖(只顯示名稱)</option>
+            <option value="mermaid">Mermaid</option>
+          </select>
+        </label>
+        <label>範圍(命名空間) <select id="ns"><option value="">(全部)</option></select></label>
+        <label>焦點類別 <input id="focus" type="text" placeholder="例:Order" size="18"></label>
+        <button id="clearFocus" type="button">清除焦點</button>
+        <label>在圖中尋找 <input id="find" type="search" placeholder="類別名稱…" size="14"></label>
+      </div>
+      <div class="row">
+        <span class="grp">關係:</span>
+        <label class="chk"><input type="checkbox" id="showInh" checked> 繼承 層數 <input type="number" id="inh" value="2" min="0" max="20"></label>
+        <label class="chk"><input type="checkbox" id="showOwn" checked> 擁有 層數 <input type="number" id="own" value="1" min="0" max="20"></label>
+        <label class="chk"><input type="checkbox" id="showDep"> 依賴 層數 <input type="number" id="dep" value="1" min="0" max="20"></label>
+        <label class="chk"><input type="checkbox" id="showNest" checked> 巢狀 層數 <input type="number" id="nest" value="2" min="0" max="20"></label>
+      </div>
+      <div class="row">
+        <label>每區顯示前 <input type="number" id="topn" value="8" min="1" max="200"> 項</label>
+        <label class="chk"><input type="checkbox" id="hidePrivate"> 隱藏 private</label>
+        <label>最多類別數 <input type="number" id="max" value="150" min="5" max="1000"></label>
+        <button id="relayout" type="button">重新排版</button>
+        <button id="fit" type="button">縮放到全部</button>
+      </div>
+      <div class="row">
+        <span class="grp">便利貼:</span>
+        <button id="addNote" type="button">＋ 貼一張</button>
+        <span id="noteColors"></span>
+        <span class="grp" style="margin-left:12px">版面:</span>
+        <select id="layList"></select>
+        <button id="laySave" type="button">儲存</button><button id="layLoad" type="button">載入</button><button id="layDel" type="button">刪除</button>
+        <button id="layExp" type="button">匯出檔案</button>
+        <label class="small">匯入檔案 <input id="layImp" type="file" accept=".json,application/json"></label>
+        <button id="svg" type="button">下載 SVG</button>
+        <span id="msg" class="mut"></span>
+      </div>
+      <div class="row legend" id="legend"></div>
+    </div>
+    <div id="notice" class="notice" hidden></div>
+    <div id="cy"></div>
+    <div id="mm" hidden>
+      <div class="row"><button id="copyMm" type="button">複製 Mermaid 文字</button><span id="mmMsg" class="mut"></span></div>
+      <div id="mmOut"></div>
+      <textarea id="mmSrc" readonly></textarea>
+    </div>
+  </section>
+  <aside id="info" hidden>
+    <div class="side-title">符號資訊 <button id="infoClose" type="button" style="float:right;padding:0 6px">✕</button></div>
+    <div id="infoBody"></div>
+  </aside>
+</div>
+
+<script src="/assets/cytoscape.min.js"></script>
+<script src="/assets/dagre.min.js"></script>
+<script src="/assets/cytoscape-dagre.js"></script>
+<script src="/assets/mermaid.min.js"></script>
+<script src="/common.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

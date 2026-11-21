@@ -1,0 +1,22 @@
+專案 TestShop(5 個原始檔)
+  介面 TestShop.Domain.IWaferSource  成員 1
+  類別 TestShop.Domain.BaseForm  成員 1
+  類別 TestShop.Domain.AOI_Form  成員 7
+  類別 TestShop.Domain.AOI_Form.AOI_CountWafer_Parameters  成員 3
+  類別 TestShop.Domain.AOI_Form_Special  成員 1
+  類別 TestShop.Domain.AOI_Form_Special2  成員 0
+  類別 TestShop.Domain.Order  成員 9
+  類別 TestShop.Domain.OrderLine  成員 9
+  類別 TestShop.Domain.Customer  成員 4
+  類別 TestShop.Domain.VipCustomer  成員 2
+  類別 TestShop.Domain.VipCustomer.Badge  成員 3
+  類別 TestShop.Domain.Pricing  成員 5
+  類別 TestShop.Domain.Cycle1  成員 1
+  類別 TestShop.Domain.Cycle2  成員 1
+  列舉 TestShop.Services.CheckoutState  成員 4
+  類別 TestShop.Services.PaymentGateway  成員 2
+  類別 TestShop.Services.Checkout  成員 6
+  介面 TestShop.Services.IOrderService  成員 1
+  類別 TestShop.Services.OrderService  成員 2
+專案 TestShop.App(1 個原始檔)
+  類別 TestShop.App.Program  成員 1

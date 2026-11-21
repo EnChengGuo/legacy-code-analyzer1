@@ -1,0 +1,32 @@
+CodeAtlas — C# 程式碼語意分析工具(離線、免安裝、繁體中文)
+==========================================================
+
+【最快的用法】
+1. 把你的 .sln(或 .csproj)檔,拖曳到「啟動 CodeAtlas.bat」上。
+2. 瀏覽器會自動開啟;頂端導覽列最左邊的「🏠 總覽」可隨時回首頁。
+3. 結束時,在黑色視窗按 Ctrl+C,或直接關掉視窗。
+
+【需要什麼】
+- Windows,已有 .NET Framework 4.8(Windows 10 以後通常已內建)
+- 一個瀏覽器(Edge 或 Chrome)
+- 想用「冤親債主」時需要 git(PATH 裡有,或 Git for Windows / Visual Studio 內附的都可以)
+- 不需要網路、不需要安裝、不需要系統管理員權限
+
+【請整個資料夾一起複製】
+只複製 CodeAtlas.exe 不夠,還需要同資料夾的 *.dll、Web、Assets。
+想換電腦用,把整個資料夾(或 zip)拿過去即可。
+
+【內容】
+- CodeAtlas使用說明.pdf     完整使用說明(含圖文、範例、AI 搭配 Copilot 的章節、免責聲明)
+- samples\                  說明文件裡所有範例用的自建測試專案
+    TestShop.sln            基本範例(類別圖、流程、度量)
+    GodDemo\                God Class 與冤親債主範例(含建立 git 歷史的指令碼)
+    DllDemo\                用原始碼取代 DLL 的範例
+- 命令列:CodeAtlas.exe 不加參數會列出所有指令
+
+【先試試看】
+  CodeAtlas.exe serve samples\TestShop.sln --open
+
+【重要】
+本工具的許多結果(死碼、重複、職責分群、儲存/UI 對照、狀態圖、資料流…)是依程式寫法的推測,
+請先讀說明文件的附錄 C「免責聲明」與附錄 D「尚未驗證的項目」。

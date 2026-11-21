@@ -1,0 +1,10 @@
+// D:\AIBDD\practise\CodeAtlas\samples\TestShop\Services\Checkout.cs 第 36–44 行
+   36                  }
+   37                  else
+   38                  {
+   39                      _state = CheckoutState.Failed;
+   40                      return 0m;
+   41                  }
+   42              }
+   43              catch (InvalidOperationException)
+   44              {

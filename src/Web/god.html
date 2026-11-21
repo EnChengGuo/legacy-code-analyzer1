@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeAtlas God Class 解剖</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+#cards{display:flex;flex-wrap:wrap;gap:10px;padding:8px 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;min-width:92px}.card b{display:block;font-size:20px}.card span{color:var(--mut);font-size:12px}
+#tabs{display:flex;gap:4px;padding:0 12px}#tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+#body{flex:1;overflow:auto;padding:8px 12px}
+table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line)}
+th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line);vertical-align:top;font-size:13px}th{color:var(--mut);position:sticky;top:0;background:var(--card)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}.flag{display:inline-block;background:var(--hit);border-radius:4px;padding:0 6px;margin:1px 2px;font-size:12px}
+.cl{background:var(--card);border:1px solid var(--line);border-radius:8px;margin:8px 0;padding:8px 12px}.cl h3{margin:0 0 4px;font-size:15px}.cl .ms{font-size:13px;color:var(--mut)}
+.hint{padding:6px 12px;color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <a href="/">🏠 總覽</a><a href="/classes">類別圖與關係圖</a><a href="/flow">函式流程</a><a href="/canvas">流程畫布</a>
+  <a href="/god" class="cur">God Class 解剖</a><a href="/clones">重複程式碼</a>
+  <span class="grow"></span><span id="status" class="mut"></span>
+</header>
+<div id="layout">
+  <aside id="side">
+    <div class="side-title">選擇類別(依行數排序)</div>
+    <input id="q" type="search" placeholder="搜尋類別名稱…">
+    <div id="qCount" class="mut small"></div>
+    <div id="list"></div>
+  </aside>
+  <section id="main">
+    <div id="bar"><div class="row">
+      <label>樞紐門檻 <input type="range" id="hub" min="5" max="100" value="25" step="5"> <span id="hubV">25%</span></label>
+      <span class="mut small">被超過這個比例的成員共用的欄位,視為「樞紐」,不拿來把方法綁在同一群。</span>
+      <input id="filter" type="search" placeholder="篩選目前表格…" size="20">
+      <button id="csv" type="button">匯出目前表格 CSV</button>
+    </div></div>
+    <div id="cards"></div>
+    <div id="tabs"></div>
+    <div class="hint" id="hint"></div>
+    <div id="body"><div class="mut">請從左邊選一個類別。</div></div>
+  </section>
+</div>
+<script src="/common.js"></script>
+<script src="/god.js"></script>
+</body>
+</html>
