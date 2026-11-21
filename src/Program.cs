@@ -29,7 +29,39 @@ namespace CodeAtlas
   diag                   編譯診斷
   search <文字>          全文搜尋";
 
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        static extern uint GetConsoleProcessList(uint[] ids, uint count);
+
+        /// <summary>這個黑色視窗是不是只屬於本程式(從檔案總管雙擊或拖曳開啟)?從命令列執行時為 false。</summary>
+        static bool OwnsConsole() { try { return GetConsoleProcessList(new uint[2], 2) == 1; } catch { return false; } }
+
         static int Main(string[] args)
+        {
+            // 把 .sln 或 .csproj 直接拖到 exe 上:等同「serve 檔案 --open」
+            if (args.Length == 1)
+            {
+                var a = args[0].Trim('"');
+                if (a.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) || a.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)) args = new[] { "serve", a, "--open" };
+            }
+            if (args.Length == 0)
+            {
+                Console.OutputEncoding = Encoding.UTF8;
+                Console.WriteLine("CodeAtlas — C# 程式碼語意分析工具\n");
+                Console.WriteLine("最簡單的用法:把你的 .sln 或 .csproj 檔,拖曳到 CodeAtlas.exe(或「啟動 CodeAtlas.bat」)上。\n");
+            }
+            int code;
+            try { code = Run(args); }
+            catch (Exception ex) { Console.OutputEncoding = Encoding.UTF8; Console.WriteLine("[錯誤] " + ex.Message); code = 1; }
+            // 從檔案總管開啟時,結束前停住,避免視窗一閃就消失、看不到訊息
+            if ((args.Length < 2 || code != 0) && OwnsConsole())
+            {
+                Console.WriteLine("\n按任意鍵結束…");
+                try { Console.ReadKey(true); } catch { }
+            }
+            return code;
+        }
+
+        static int Run(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
             if (args.Length < 2) { Console.WriteLine(Usage); return 2; }
