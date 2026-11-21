@@ -20,7 +20,7 @@ CodeAtlas — C# 程式碼語意分析工具(離線、免安裝、繁體中文)
 想換電腦用,把整個資料夾(或 zip)拿過去即可。
 
 【內容】
-- CodeAtlas使用說明.pdf     完整使用說明(含圖文、範例、AI 搭配 Copilot 的章節、免責聲明)
+- CodeAtlas使用說明_v0.9.pdf     完整使用說明(含圖文、範例、AI 搭配 Copilot 的章節、免責聲明)
 - samples\                  說明文件裡所有範例用的自建測試專案
     TestShop.sln            基本範例(類別圖、流程、度量)
     GodDemo\                God Class 與冤親債主範例(含建立 git 歷史的指令碼)

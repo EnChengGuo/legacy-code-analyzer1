@@ -13,7 +13,7 @@ C# 程式碼語意分析工具。以 Roslyn 在 .NET Framework 4.8 上直接執�
 - 給 Copilot 的 AI 上下文(只給簽章,需要時再讀指定函式內文)
 - `--source` 用原始碼取代 DLL
 
-完整說明見 [`docs/CodeAtlas使用說明.pdf`](docs/CodeAtlas使用說明.pdf)(含免責聲明與尚未驗證的項目)。
+完整說明見 [`docs/CodeAtlas使用說明_v0.9.pdf`](docs/CodeAtlas使用說明_v0.9.pdf)(含免責聲明與尚未驗證的項目)。
 
 ## 建置與執行
 
